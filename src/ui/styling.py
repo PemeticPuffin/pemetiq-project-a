@@ -23,6 +23,10 @@ html, body, [class*="css"] {
     max-width: 1100px !important;
 }
 
+/* ── Hide Streamlit chrome ──────────────────────────────────────── */
+header[data-testid="stHeader"], #MainMenu, footer,
+.stDeployButton { display: none !important; }
+
 /* ── Header ──────────────────────────────────────────────────────── */
 .ci-header {
     background: linear-gradient(135deg, #001731 0%, #0d2c4d 100%);
