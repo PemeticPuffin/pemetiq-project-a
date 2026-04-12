@@ -30,7 +30,7 @@ from src.analysis.synthesis import synthesize
 from src.data.news_api import fetch_news
 from src.data.sec_edgar import fetch_latest_filing
 from src.data.trends import fetch_trends
-from src.entity_resolver import resolve_company
+from src.entity_resolver import ResolvedEntity, resolve_company
 from src.ui.components import (
     render_company_brief,
     render_footer,
@@ -101,14 +101,22 @@ if run_clicked:
         progress = st.progress(0, text="Resolving company identity...")
 
         # Step 1: Entity resolution
+        _sec_fallback = False
         try:
             entity = resolve_company(query.strip())
-        except ValueError as exc:
-            progress.empty()
-            st.error(str(exc))
-            st.stop()
+        except ValueError:
+            # Private company or unrecognized ticker — proceed without SEC data
+            _sec_fallback = True
+            entity = ResolvedEntity(cik=0, legal_name=query.strip().title(), ticker="N/A")
 
-        progress.progress(20, text=f"Found **{entity.legal_name}** ({entity.ticker}) — fetching data...")
+        if _sec_fallback:
+            st.warning(
+                f"**{entity.legal_name}** doesn't appear to be a publicly registered US company — "
+                "SEC filing data will be unavailable. Showing news and search trend analysis only."
+            )
+            progress.progress(20, text=f"Searching for **{entity.legal_name}** — fetching news and trends...")
+        else:
+            progress.progress(20, text=f"Found **{entity.legal_name}** ({entity.ticker}) — fetching data...")
 
         # Step 2: Parallel data fetch
         filing = fetch_latest_filing(entity.cik, entity.legal_name)

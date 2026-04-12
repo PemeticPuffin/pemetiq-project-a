@@ -59,6 +59,15 @@ def fetch_latest_filing(cik: int, company_name: str) -> SECFiling:
     Returns:
         SECFiling with extracted section text, or fetch_error set if failed.
     """
+    if not cik:
+        return SECFiling(
+            form_type="N/A",
+            filed_date="N/A",
+            company_name=company_name,
+            cik=cik,
+            fetch_error="Not a registered SEC filer — no public filings available.",
+        )
+
     try:
         form_type, filed_date, doc_url = _get_latest_filing_url(cik)
         logger.info("Fetching %s filed %s for CIK %d", form_type, filed_date, cik)

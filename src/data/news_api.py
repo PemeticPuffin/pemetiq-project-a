@@ -54,6 +54,13 @@ def fetch_news(company_name: str, ticker: str, max_articles: int = 30) -> NewsDa
     Returns:
         NewsData with articles, or fetch_error set if failed.
     """
+    if not ticker or ticker.upper() == "N/A":
+        return NewsData(
+            company_name=company_name,
+            ticker=ticker,
+            fetch_error="No stock ticker available — news fetch requires a public company ticker.",
+        )
+
     api_key = os.getenv("FINNHUB_API_KEY")
     if not api_key:
         return NewsData(
