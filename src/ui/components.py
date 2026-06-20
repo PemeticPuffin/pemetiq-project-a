@@ -14,7 +14,7 @@ def _b64_img(path: Path) -> str:
 
 from src.analysis.confidence import CONFIDENCE_ORDER
 from src.analysis.per_source import SourceAnalysis
-from src.analysis.synthesis import SynthesisResult
+from src.analysis.synthesis import ComparisonResult, SynthesisResult
 from src.entity_resolver import ResolvedEntity
 from src.ui.styling import badge_html, priority_badge_html
 
@@ -351,6 +351,202 @@ def render_source_findings(analyses: list[SourceAnalysis]) -> None:
                 f'<div style="padding-top:0.5rem;">{cards_html}</div>',
                 unsafe_allow_html=True,
             )
+
+
+def render_comparison_view(
+    entity_a: ResolvedEntity,
+    analyses_a: list[SourceAnalysis],
+    entity_b: ResolvedEntity,
+    analyses_b: list[SourceAnalysis],
+    comparison: ComparisonResult,
+) -> None:
+    """Render the full head-to-head comparison view.
+
+    Args:
+        entity_a: Resolved entity for company A.
+        analyses_a: Per-source analyses for company A.
+        entity_b: Resolved entity for company B.
+        analyses_b: Per-source analyses for company B.
+        comparison: Completed comparison synthesis result.
+    """
+    # ── Company cards ──────────────────────────────────────────────────────
+    st.markdown(
+        '<div class="section-label">Head-to-Head Comparison</div>'
+        '<div class="section-subtitle">Independent analysis of each company, synthesized into a structured competitive brief.</div>',
+        unsafe_allow_html=True,
+    )
+
+    col_a, col_b = st.columns(2, gap="medium")
+    with col_a:
+        render_company_card(entity_a)
+    with col_b:
+        render_company_card(entity_b)
+
+    # ── Comparison summary ─────────────────────────────────────────────────
+    if comparison.error and not comparison.comparison_summary:
+        st.error(f"Comparison synthesis error: {comparison.error}")
+    elif comparison.comparison_summary:
+        st.markdown(
+            f'<div class="company-brief-card" style="margin-top:1rem;">'
+            f'<p class="exec-summary-p lead">{comparison.comparison_summary}</p>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    # ── Competitive edges ──────────────────────────────────────────────────
+    if comparison.competitive_edges:
+        st.markdown(
+            '<div style="margin-top:1.8rem;margin-bottom:0.25rem;">'
+            '<div class="signal-section-header"><div class="signal-dot"></div>'
+            '<div class="signal-section-title">Competitive Edges</div></div>'
+            '<div class="signal-section-subtitle">Where each company has a clear, evidence-backed advantage.</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        cards_html = ""
+        for edge in comparison.competitive_edges:
+            company_label = (
+                f'<span style="font-size:0.65rem;font-weight:600;letter-spacing:0.06em;'
+                f'color:var(--teal);text-transform:uppercase;">{edge.company}</span>'
+            )
+            cards_html += (
+                f'<div class="signal-card">'
+                f'{company_label}'
+                f'<div class="signal-card-title" style="margin-top:0.3rem;">{edge.dimension}</div>'
+                f'<div class="signal-card-body">{edge.advantage}</div>'
+                f'<div style="font-size:0.75rem;color:#6B7580;margin-top:0.5rem;">{edge.evidence}</div>'
+                f'</div>'
+            )
+        st.markdown(
+            f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:0.5rem;">{cards_html}</div>',
+            unsafe_allow_html=True,
+        )
+
+    # ── Diverging signals ──────────────────────────────────────────────────
+    if comparison.diverging_signals:
+        st.markdown(
+            '<div class="contradictions-banner">'
+            '<div class="contrad-eyebrow">Diverging Signals</div>'
+            '<div class="contrad-title">Where the companies are moving in opposite directions</div>'
+            '<div class="contrad-desc">Topics where evidence for one company points clearly away from the other — the most actionable intelligence in a head-to-head.</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        cards_html = ""
+        for i, d in enumerate(comparison.diverging_signals, 1):
+            cards_html += (
+                f'<div class="contradiction-v2">'
+                f'<div class="contradiction-number">Signal {i}</div>'
+                f'<div class="contradiction-title">{d.topic}</div>'
+                f'<div class="contradiction-desc"><strong>{comparison.name_a}:</strong> {d.company_a}</div>'
+                f'<div class="contradiction-desc" style="margin-top:-0.3rem;"><strong>{comparison.name_b}:</strong> {d.company_b}</div>'
+                f'</div>'
+            )
+        grid_cols = "1fr 1fr" if len(comparison.diverging_signals) > 1 else "1fr"
+        st.markdown(
+            f'<div class="contradictions-body"><div style="display:grid;grid-template-columns:{grid_cols};gap:1rem;">{cards_html}</div></div>',
+            unsafe_allow_html=True,
+        )
+
+    # ── Shared vulnerabilities + Watch signals ─────────────────────────────
+    col1, col2 = st.columns(2, gap="medium")
+    with col1:
+        st.markdown(
+            '<div style="margin-top:1.8rem;margin-bottom:0.25rem;">'
+            '<div class="absence-section-title">Shared Vulnerabilities</div>'
+            '<div class="absence-section-subtitle">Risks and weaknesses both companies face — neutralise these before leaning on any edge.</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        if comparison.shared_vulnerabilities:
+            items_html = "".join(
+                f'<div class="absence-item"><span class="absence-dash">—</span><span>{v}</span></div>'
+                for v in comparison.shared_vulnerabilities
+            )
+            st.markdown(f"<div>{items_html}</div>", unsafe_allow_html=True)
+        else:
+            st.caption("No shared vulnerabilities identified.")
+
+    with col2:
+        st.markdown(
+            '<div style="margin-top:1.8rem;margin-bottom:0.25rem;">'
+            '<div class="watch-section-title">Watch Signals</div>'
+            '<div class="watch-section-subtitle">Asymmetric risks or early indicators that could shift this comparison.</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        if comparison.watch_signals:
+            for signal in comparison.watch_signals:
+                title, body = _split_titled(signal)
+                display_title = title if title else signal[:80]
+                display_body = body if title else ""
+                st.markdown(
+                    f'<div class="watch-card">'
+                    f'<div class="watch-card-title">{display_title}</div>'
+                    f'<div class="watch-card-body">{display_body}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
+        else:
+            st.caption("No watch signals identified.")
+
+    # ── Per-source findings — side by side tabs ────────────────────────────
+    st.markdown(
+        '<div style="margin-top:2.2rem;margin-bottom:0.25rem;">'
+        '<div class="findings-section-label">Per-Source Findings</div>'
+        '<div class="findings-section-subtitle">Independent source analysis for each company. Expand to compare raw findings.</div>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+    col_a2, col_b2 = st.columns(2, gap="medium")
+    for col, entity, analyses in (
+        (col_a2, entity_a, analyses_a),
+        (col_b2, entity_b, analyses_b),
+    ):
+        with col:
+            st.markdown(
+                f'<div style="font-size:0.8rem;font-weight:600;color:var(--navy);margin-bottom:0.5rem;">'
+                f'{entity.legal_name}</div>',
+                unsafe_allow_html=True,
+            )
+            tab_labels = [
+                f"{a.source_name}  {len(a.findings) if a.is_available else 0}"
+                for a in analyses
+            ]
+            tabs = st.tabs(tab_labels)
+            for tab, analysis in zip(tabs, analyses):
+                with tab:
+                    if not analysis.is_available:
+                        st.markdown(
+                            f'<div class="source-error">Data unavailable: {analysis.error}</div>',
+                            unsafe_allow_html=True,
+                        )
+                        continue
+                    if not analysis.findings:
+                        st.caption("No findings returned for this source.")
+                        continue
+                    sorted_findings = sorted(
+                        analysis.findings,
+                        key=lambda f: CONFIDENCE_ORDER.get(f.confidence, 0),
+                        reverse=True,
+                    )
+                    cards_html = ""
+                    for finding in sorted_findings:
+                        bdg = badge_html(finding.confidence)
+                        cards_html += (
+                            f'<div class="finding-card-v2">'
+                            f'<div class="finding-badge-col">{bdg}</div>'
+                            f'<div class="finding-content-col">'
+                            f'<div class="finding-category-v2">{finding.category}</div>'
+                            f'<div class="finding-text-v2">{finding.text}</div>'
+                            f'</div>'
+                            f'</div>'
+                        )
+                    st.markdown(
+                        f'<div style="padding-top:0.5rem;">{cards_html}</div>',
+                        unsafe_allow_html=True,
+                    )
 
 
 def render_footer() -> None:

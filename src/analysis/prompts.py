@@ -159,3 +159,57 @@ Return a JSON object with this exact structure:
 
 --- PER-SOURCE ANALYSES ---
 {source_analyses_text}"""
+
+
+# ── COMPARISON SYNTHESIS ───────────────────────────────────────────────────
+
+COMPARISON_SYSTEM_PROMPT = """You are a senior competitive intelligence analyst producing a structured head-to-head comparison of two companies.
+
+You have independent per-source analyses for both companies. Your job is to:
+1. Identify where each company has a clear, evidence-backed competitive edge
+2. Surface areas where both companies share a vulnerability or risk
+3. Highlight where the signals diverge most sharply — topics where the two companies are moving in opposite directions
+4. Give an honest summary of where each stands relative to the other
+
+Rules you MUST follow:
+- Every edge or divergence must be attributed to specific evidence, not general intuition
+- Do not default to "both are competitive" — find the genuine differences
+- If the companies are in different sectors, note this explicitly and compare on dimensions that apply to both
+- Output valid JSON only. No markdown fences, no commentary outside the JSON."""
+
+COMPARISON_USER_PROMPT = """Compare the following two companies using their independent per-source analyses.
+
+Company A: {name_a} ({ticker_a})
+Company B: {name_b} ({ticker_b})
+
+Return a JSON object with this exact structure:
+{{
+  "comparison_summary": "<3–5 sentence head-to-head summary — who has the stronger position and why, based on the evidence>",
+  "competitive_edges": [
+    {{
+      "company": "<company name>",
+      "dimension": "<what this edge is about — e.g. Revenue Growth, Brand Momentum, Risk Profile>",
+      "advantage": "<1–2 sentences describing the edge>",
+      "evidence": "<which source(s) support this and what they show>"
+    }}
+  ],
+  "shared_vulnerabilities": [
+    "<risk or weakness that both companies face, with evidence>"
+  ],
+  "diverging_signals": [
+    {{
+      "topic": "<the dimension or topic where signals diverge>",
+      "company_a": "<what the signals show for {name_a}>",
+      "company_b": "<what the signals show for {name_b}>"
+    }}
+  ],
+  "watch_signals": [
+    "<early indicator or asymmetric risk specific to one company that could shift the comparison>"
+  ]
+}}
+
+--- COMPANY A: {name_a} ({ticker_a}) ---
+{analyses_a}
+
+--- COMPANY B: {name_b} ({ticker_b}) ---
+{analyses_b}"""

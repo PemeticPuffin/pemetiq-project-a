@@ -26,13 +26,14 @@ st.set_page_config(
 )
 
 from src.analysis.per_source import analyze_all_sources
-from src.analysis.synthesis import synthesize
+from src.analysis.synthesis import compare_synthesize, synthesize
 from src.data.news_api import fetch_news
 from src.data.sec_edgar import fetch_latest_filing
 from src.data.trends import fetch_trends
 from src.entity_resolver import ResolvedEntity, resolve_company
 from src.ui.components import (
     render_company_brief,
+    render_comparison_view,
     render_footer,
     render_source_findings,
     render_synthesis_sections,
@@ -61,24 +62,52 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── Search input ───────────────────────────────────────────────────────────
-col_input, col_btn = st.columns([5, 1], gap="small")
+# ── Mode toggle ────────────────────────────────────────────────────────────
+mode = st.radio(
+    "Mode",
+    ["Single company", "Compare two companies"],
+    horizontal=True,
+    label_visibility="collapsed",
+)
 
-with col_input:
-    query = st.text_input(
-        label="Company",
-        placeholder="Enter a company name or ticker — e.g. Palantir, MSFT, Nvidia",
-        label_visibility="collapsed",
-    )
+st.markdown("<div style='height:0.75rem'></div>", unsafe_allow_html=True)
 
-with col_btn:
-    run_clicked = st.button("Analyze", type="primary", use_container_width=True)
+# ── Search inputs ──────────────────────────────────────────────────────────
+if mode == "Single company":
+    col_input, col_btn = st.columns([5, 1], gap="small")
+    with col_input:
+        query = st.text_input(
+            label="Company",
+            placeholder="Enter a company name or ticker — e.g. Palantir, MSFT, Nvidia",
+            label_visibility="collapsed",
+        )
+    with col_btn:
+        run_clicked = st.button("Analyze", type="primary", use_container_width=True)
+    query_b = ""
+else:
+    col_a, col_b, col_btn = st.columns([3, 3, 1], gap="small")
+    with col_a:
+        query = st.text_input(
+            label="Company A",
+            placeholder="Company A — e.g. Palantir",
+            label_visibility="collapsed",
+        )
+    with col_b:
+        query_b = st.text_input(
+            label="Company B",
+            placeholder="Company B — e.g. Snowflake",
+            label_visibility="collapsed",
+        )
+    with col_btn:
+        run_clicked = st.button("Compare", type="primary", use_container_width=True)
 
 st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
 
 # ── Session state ──────────────────────────────────────────────────────────
 if "result" not in st.session_state:
     st.session_state.result = None
+if "mode" not in st.session_state:
+    st.session_state.mode = "single"
 
 
 def _render_brief(entity, analyses, synthesis) -> None:
@@ -93,69 +122,113 @@ def _render_brief(entity, analyses, synthesis) -> None:
     render_source_findings(analyses)
 
 
+def _resolve(query: str) -> tuple[ResolvedEntity, bool]:
+    """Resolve a company query; return (entity, sec_fallback)."""
+    try:
+        return resolve_company(query.strip()), False
+    except ValueError:
+        return ResolvedEntity(cik=0, legal_name=query.strip().title(), ticker="N/A"), True
+
+
+def _run_pipeline(entity: ResolvedEntity) -> dict:
+    """Fetch data and run per-source analysis for one company."""
+    filing = fetch_latest_filing(entity.cik, entity.legal_name)
+    news_data = fetch_news(entity.legal_name, entity.ticker)
+    trends_data = fetch_trends(entity.legal_name, entity.ticker)
+    analyses = analyze_all_sources(
+        company_name=entity.legal_name,
+        ticker=entity.ticker,
+        filing=filing,
+        news_data=news_data,
+        trends_data=trends_data,
+    )
+    return {"entity": entity, "analyses": analyses}
+
+
 # ── Pipeline ───────────────────────────────────────────────────────────────
 if run_clicked:
-    if not query.strip():
-        st.warning("Please enter a company name or ticker.")
-    else:
-        progress = st.progress(0, text="Resolving company identity...")
-
-        # Step 1: Entity resolution
-        _sec_fallback = False
-        try:
-            entity = resolve_company(query.strip())
-        except ValueError:
-            # Private company or unrecognized ticker — proceed without SEC data
-            _sec_fallback = True
-            entity = ResolvedEntity(cik=0, legal_name=query.strip().title(), ticker="N/A")
-
-        if _sec_fallback:
-            st.warning(
-                f"**{entity.legal_name}** doesn't appear to be a publicly registered US company — "
-                "SEC filing data will be unavailable. Showing news and search trend analysis only."
-            )
-            progress.progress(20, text=f"Searching for **{entity.legal_name}** — fetching news and trends...")
+    if mode == "Single company":
+        if not query.strip():
+            st.warning("Please enter a company name or ticker.")
         else:
-            progress.progress(20, text=f"Found **{entity.legal_name}** ({entity.ticker}) — fetching data...")
+            progress = st.progress(0, text="Resolving company identity...")
+            entity, fallback = _resolve(query)
+            if fallback:
+                st.warning(
+                    f"**{entity.legal_name}** doesn't appear to be a publicly registered US company — "
+                    "SEC filing data will be unavailable. Showing news and search trend analysis only."
+                )
+            progress.progress(20, text=f"Found **{entity.legal_name}** — fetching data...")
+            r = _run_pipeline(entity)
+            progress.progress(60, text="Synthesizing cross-source brief...")
+            synthesis = synthesize(
+                company_name=entity.legal_name,
+                ticker=entity.ticker,
+                source_analyses=r["analyses"],
+            )
+            progress.progress(100, text="Complete.")
+            progress.empty()
+            st.session_state.mode = "single"
+            st.session_state.result = {
+                "entity": entity,
+                "analyses": r["analyses"],
+                "synthesis": synthesis,
+            }
 
-        # Step 2: Parallel data fetch
-        filing = fetch_latest_filing(entity.cik, entity.legal_name)
-        news_data = fetch_news(entity.legal_name, entity.ticker)
-        trends_data = fetch_trends(entity.legal_name, entity.ticker)
+    else:  # Compare two companies
+        if not query.strip() or not query_b.strip():
+            st.warning("Please enter both company names or tickers.")
+        else:
+            progress = st.progress(0, text="Resolving company identities...")
+            entity_a, fallback_a = _resolve(query)
+            entity_b, fallback_b = _resolve(query_b)
+            for entity, fallback in ((entity_a, fallback_a), (entity_b, fallback_b)):
+                if fallback:
+                    st.warning(
+                        f"**{entity.legal_name}** doesn't appear to be a publicly registered US company — "
+                        "SEC filing data will be unavailable for this company."
+                    )
 
-        progress.progress(50, text="Analyzing each source with Claude...")
+            progress.progress(15, text=f"Fetching data for {entity_a.legal_name} and {entity_b.legal_name}...")
+            r_a = _run_pipeline(entity_a)
+            r_b = _run_pipeline(entity_b)
 
-        # Step 3: Per-source analysis
-        analyses = analyze_all_sources(
-            company_name=entity.legal_name,
-            ticker=entity.ticker,
-            filing=filing,
-            news_data=news_data,
-            trends_data=trends_data,
-        )
+            progress.progress(55, text="Analyzing sources with Claude...")
+            # Per-source analyses were already run inside _run_pipeline
 
-        progress.progress(80, text="Synthesizing cross-source brief...")
-
-        # Step 4: Synthesis
-        synthesis = synthesize(
-            company_name=entity.legal_name,
-            ticker=entity.ticker,
-            source_analyses=analyses,
-        )
-
-        progress.progress(100, text="Complete.")
-        progress.empty()
-
-        st.session_state.result = {
-            "entity": entity,
-            "analyses": analyses,
-            "synthesis": synthesis,
-        }
+            progress.progress(75, text="Running head-to-head comparison synthesis...")
+            comparison = compare_synthesize(
+                name_a=entity_a.legal_name,
+                ticker_a=entity_a.ticker,
+                analyses_a=r_a["analyses"],
+                name_b=entity_b.legal_name,
+                ticker_b=entity_b.ticker,
+                analyses_b=r_b["analyses"],
+            )
+            progress.progress(100, text="Complete.")
+            progress.empty()
+            st.session_state.mode = "compare"
+            st.session_state.result = {
+                "entity_a": entity_a,
+                "analyses_a": r_a["analyses"],
+                "entity_b": entity_b,
+                "analyses_b": r_b["analyses"],
+                "comparison": comparison,
+            }
 
 # ── Render stored result ───────────────────────────────────────────────────
 if st.session_state.result:
     r = st.session_state.result
-    _render_brief(r["entity"], r["analyses"], r["synthesis"])
+    if st.session_state.mode == "single":
+        _render_brief(r["entity"], r["analyses"], r["synthesis"])
+    else:
+        render_comparison_view(
+            entity_a=r["entity_a"],
+            analyses_a=r["analyses_a"],
+            entity_b=r["entity_b"],
+            analyses_b=r["analyses_b"],
+            comparison=r["comparison"],
+        )
 else:
     st.markdown(
         """
