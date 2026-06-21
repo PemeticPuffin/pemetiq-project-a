@@ -1,8 +1,9 @@
 """Global constants, model config, and API endpoints."""
 
-# Claude model
+# Claude models — fast model for per-source extraction, full model for synthesis
 CLAUDE_MODEL = "claude-sonnet-4-6"
-CLAUDE_MAX_TOKENS_PER_SOURCE = 4096
+CLAUDE_MODEL_FAST = "claude-haiku-4-5-20251001"
+CLAUDE_MAX_TOKENS_PER_SOURCE = 2048
 CLAUDE_MAX_TOKENS_SYNTHESIS = 8192
 CLAUDE_TEMPERATURE = 0.3
 

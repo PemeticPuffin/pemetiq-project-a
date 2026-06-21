@@ -10,7 +10,7 @@ from typing import Optional
 import anthropic
 from dotenv import load_dotenv
 
-from config import CLAUDE_MODEL, CLAUDE_MAX_TOKENS_PER_SOURCE, CLAUDE_TEMPERATURE
+from config import CLAUDE_MODEL_FAST, CLAUDE_MAX_TOKENS_PER_SOURCE, CLAUDE_TEMPERATURE
 from src.analysis.confidence import normalize_confidence
 from src.analysis.prompts import (
     NEWS_SYSTEM_PROMPT,
@@ -191,7 +191,7 @@ async def _call_claude(
     """
     try:
         response = await client.messages.create(
-            model=CLAUDE_MODEL,
+            model=CLAUDE_MODEL_FAST,
             max_tokens=CLAUDE_MAX_TOKENS_PER_SOURCE,
             temperature=CLAUDE_TEMPERATURE,
             system=system_prompt,
