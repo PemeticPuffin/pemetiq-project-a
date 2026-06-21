@@ -37,6 +37,8 @@ from src.ui.components import (
     render_footer,
     render_source_findings,
     render_synthesis_sections,
+    render_takeaways_anchor,
+    render_takeaways_section,
 )
 from src.ui.styling import CUSTOM_CSS
 
@@ -118,8 +120,10 @@ def _render_brief(entity, analyses, synthesis) -> None:
         unsafe_allow_html=True,
     )
     render_company_brief(entity, synthesis)
+    render_takeaways_anchor(synthesis.key_takeaways)
     render_synthesis_sections(synthesis)
     render_source_findings(analyses)
+    render_takeaways_section(synthesis.key_takeaways)
 
 
 def _resolve(query: str) -> tuple[ResolvedEntity, bool]:

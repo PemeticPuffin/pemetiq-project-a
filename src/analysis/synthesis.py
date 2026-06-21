@@ -39,6 +39,7 @@ class SynthesisResult:
     company_name: str
     ticker: str
     executive_summary: str = ""
+    key_takeaways: list[str] = field(default_factory=list)
     reinforcing_signals: list[str] = field(default_factory=list)
     contradictions: list[Contradiction] = field(default_factory=list)
     notable_absences: list[str] = field(default_factory=list)
@@ -80,6 +81,7 @@ class ComparisonResult:
     name_b: str
     ticker_b: str
     comparison_summary: str = ""
+    key_takeaways: list[str] = field(default_factory=list)
     competitive_edges: list[CompetitiveEdge] = field(default_factory=list)
     shared_vulnerabilities: list[str] = field(default_factory=list)
     diverging_signals: list[DivergingSignal] = field(default_factory=list)
@@ -172,6 +174,7 @@ def _parse_comparison(
             name_a=name_a, ticker_a=ticker_a,
             name_b=name_b, ticker_b=ticker_b,
             comparison_summary=data.get("comparison_summary", ""),
+            key_takeaways=data.get("key_takeaways", []),
             competitive_edges=edges,
             shared_vulnerabilities=data.get("shared_vulnerabilities", []),
             diverging_signals=diverging,
@@ -260,6 +263,7 @@ def _parse_synthesis(raw_text: str, company_name: str, ticker: str) -> Synthesis
             company_name=company_name,
             ticker=ticker,
             executive_summary=data.get("executive_summary", ""),
+            key_takeaways=data.get("key_takeaways", []),
             reinforcing_signals=data.get("reinforcing_signals", []),
             contradictions=contradictions,
             notable_absences=data.get("notable_absences", []),

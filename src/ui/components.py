@@ -353,6 +353,76 @@ def render_source_findings(analyses: list[SourceAnalysis]) -> None:
             )
 
 
+def render_takeaways_anchor(takeaways: list[str], compare: bool = False) -> None:
+    """Render the compact top anchor card linking down to the full takeaways section.
+
+    Args:
+        takeaways: List of takeaway strings from the synthesis.
+        compare: True when rendering in comparison mode (adjusts label).
+    """
+    if not takeaways:
+        return
+    label = "Head-to-Head Verdict" if compare else "Key Takeaways"
+    items_html = "".join(
+        f'<div style="display:flex;gap:0.6rem;margin-bottom:0.45rem;align-items:flex-start;">'
+        f'<span style="font-size:0.72rem;font-weight:700;color:var(--teal);min-width:1.1rem;padding-top:0.05rem;">{i}.</span>'
+        f'<span style="font-size:0.82rem;color:var(--navy);line-height:1.55;">{t}</span>'
+        f'</div>'
+        for i, t in enumerate(takeaways, 1)
+    )
+    st.markdown(
+        f'<div style="background:rgba(26,92,106,0.06);border:1px solid rgba(26,92,106,0.18);'
+        f'border-radius:8px;padding:1.1rem 1.25rem 0.9rem;margin-bottom:1.5rem;">'
+        f'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;">'
+        f'<span style="font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;'
+        f'color:var(--teal);">{label}</span>'
+        f'<a href="#takeaways" style="font-size:0.72rem;color:var(--teal);text-decoration:none;'
+        f'opacity:0.7;">full analysis ↓</a>'
+        f'</div>'
+        f'{items_html}'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_takeaways_section(takeaways: list[str], compare: bool = False) -> None:
+    """Render the full takeaways section at the bottom of the brief.
+
+    Args:
+        takeaways: List of takeaway strings from the synthesis.
+        compare: True when rendering in comparison mode (adjusts label).
+    """
+    if not takeaways:
+        return
+    label = "Head-to-Head Verdict" if compare else "Key Takeaways"
+    subtitle = (
+        "Directional verdicts based on the evidence above — where each company stands relative to the other."
+        if compare else
+        "What an investor or operator should do, watch, or weigh based on the full evidence set."
+    )
+    items_html = "".join(
+        f'<div style="display:flex;gap:0.75rem;padding:0.85rem 0;'
+        f'border-bottom:1px solid rgba(14,59,84,0.07);align-items:flex-start;">'
+        f'<span style="font-size:1rem;font-weight:700;color:var(--teal);min-width:1.5rem;'
+        f'line-height:1.4;padding-top:0.05rem;">{i}.</span>'
+        f'<span style="font-size:0.88rem;color:var(--navy);line-height:1.6;">{t}</span>'
+        f'</div>'
+        for i, t in enumerate(takeaways, 1)
+    )
+    st.markdown(
+        f'<div id="takeaways" style="margin-top:2.5rem;">'
+        f'<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.2rem;">'
+        f'<div style="width:3px;height:1.1rem;background:var(--teal);border-radius:2px;"></div>'
+        f'<span style="font-size:0.75rem;font-weight:600;letter-spacing:0.08em;'
+        f'text-transform:uppercase;color:var(--teal);">{label}</span>'
+        f'</div>'
+        f'<div style="font-size:0.78rem;color:#6B7580;margin-bottom:0.75rem;">{subtitle}</div>'
+        f'<div style="border-top:1px solid rgba(14,59,84,0.1);">{items_html}</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
 def render_comparison_view(
     entity_a: ResolvedEntity,
     analyses_a: list[SourceAnalysis],
@@ -392,6 +462,8 @@ def render_comparison_view(
             f'</div>',
             unsafe_allow_html=True,
         )
+
+    render_takeaways_anchor(comparison.key_takeaways, compare=True)
 
     # ── Competitive edges ──────────────────────────────────────────────────
     if comparison.competitive_edges:
@@ -489,6 +561,8 @@ def render_comparison_view(
                 )
         else:
             st.caption("No watch signals identified.")
+
+    render_takeaways_section(comparison.key_takeaways, compare=True)
 
     # ── Per-source findings — side by side tabs ────────────────────────────
     st.markdown(

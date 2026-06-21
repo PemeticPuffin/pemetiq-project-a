@@ -138,6 +138,9 @@ SYNTHESIS_USER_PROMPT = """Synthesize the following per-source analyses for {com
 Return a JSON object with this exact structure:
 {{
   "executive_summary": "<3–5 sentence summary of the most important signals across all sources>",
+  "key_takeaways": [
+    "<concise, action-oriented takeaway — what an investor or operator should specifically do, watch, or weigh given this evidence. 3–5 items, ordered most important first.>"
+  ],
   "reinforcing_signals": [
     "<signal that multiple sources confirm — cite which sources>"
   ],
@@ -185,6 +188,9 @@ Company B: {name_b} ({ticker_b})
 Return a JSON object with this exact structure:
 {{
   "comparison_summary": "<3–5 sentence head-to-head summary — who has the stronger position and why, based on the evidence>",
+  "key_takeaways": [
+    "<directional, verdict-style takeaway about the head-to-head — name the stronger company where evidence supports it. 3–5 items, ordered most important first.>"
+  ],
   "competitive_edges": [
     {{
       "company": "<company name>",
