@@ -14,13 +14,12 @@ from config import CLAUDE_MODEL_FAST, CLAUDE_MAX_TOKENS_PER_SOURCE, CLAUDE_TEMPE
 from src.analysis.confidence import normalize_confidence
 from src.analysis.prompts import (
     NEWS_SYSTEM_PROMPT,
-    NEWS_USER_PROMPT,
+    NEWS_WEB_SEARCH_USER_PROMPT,
     SEC_SYSTEM_PROMPT,
     SEC_USER_PROMPT,
     TRENDS_SYSTEM_PROMPT,
     TRENDS_USER_PROMPT,
 )
-from src.data.news_api import NewsData, format_articles_for_prompt
 from src.data.sec_edgar import SECFiling, format_sections_for_prompt
 from src.data.trends import TrendsData, format_trends_for_prompt
 
@@ -69,7 +68,6 @@ def analyze_all_sources(
     company_name: str,
     ticker: str,
     filing: SECFiling,
-    news_data: NewsData,
     trends_data: TrendsData,
 ) -> list[SourceAnalysis]:
     """Run per-source Claude analysis for all three sources concurrently.
@@ -78,14 +76,13 @@ def analyze_all_sources(
         company_name: Legal company name.
         ticker: Stock ticker symbol.
         filing: Fetched SEC filing data.
-        news_data: Fetched news articles.
         trends_data: Fetched Google Trends data.
 
     Returns:
         List of three SourceAnalysis results (SEC, News, Trends).
     """
     return asyncio.run(
-        _analyze_all_async(company_name, ticker, filing, news_data, trends_data)
+        _analyze_all_async(company_name, ticker, filing, trends_data)
     )
 
 
@@ -93,7 +90,6 @@ async def _analyze_all_async(
     company_name: str,
     ticker: str,
     filing: SECFiling,
-    news_data: NewsData,
     trends_data: TrendsData,
 ) -> list[SourceAnalysis]:
     """Fire all three Claude analysis calls concurrently via asyncio.gather."""
@@ -101,7 +97,7 @@ async def _analyze_all_async(
 
     tasks = [
         _analyze_sec(client, company_name, ticker, filing),
-        _analyze_news(client, company_name, ticker, news_data),
+        _analyze_news_web(client, company_name, ticker),
         _analyze_trends(client, company_name, ticker, trends_data),
     ]
     results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -136,22 +132,38 @@ async def _analyze_sec(
     return await _call_claude(client, "SEC Filing", SEC_SYSTEM_PROMPT, user_prompt)
 
 
-async def _analyze_news(
+async def _analyze_news_web(
     client: anthropic.AsyncAnthropic,
     company_name: str,
     ticker: str,
-    news_data: NewsData,
 ) -> SourceAnalysis:
-    """Analyze news data with Claude."""
-    if news_data.fetch_error:
-        return SourceAnalysis(source_name="Recent News", error=news_data.fetch_error)
-
-    user_prompt = NEWS_USER_PROMPT.format(
+    """Search the web for recent news and analyze it via Claude's built-in web search."""
+    user_prompt = NEWS_WEB_SEARCH_USER_PROMPT.format(
         company_name=company_name,
-        ticker=ticker,
-        news_text=format_articles_for_prompt(news_data),
+        ticker=ticker if ticker and ticker.upper() != "N/A" else company_name,
     )
-    return await _call_claude(client, "Recent News", NEWS_SYSTEM_PROMPT, user_prompt)
+    try:
+        response = await client.messages.create(
+            model=CLAUDE_MODEL_FAST,
+            max_tokens=CLAUDE_MAX_TOKENS_PER_SOURCE,
+            tools=[{"type": "web_search_20250305", "name": "web_search"}],
+            system=NEWS_SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": user_prompt}],
+        )
+        # Web search responses have multiple content blocks; take the last text block
+        raw_text = next(
+            (b.text for b in reversed(response.content) if b.type == "text"),
+            "",
+        )
+        findings = _parse_findings(raw_text, "Recent News")
+        return SourceAnalysis(
+            source_name="Recent News",
+            findings=findings,
+            raw_response=raw_text,
+        )
+    except Exception as exc:
+        logger.error("Web search news analysis failed: %s", exc)
+        return SourceAnalysis(source_name="Recent News", error=str(exc))
 
 
 async def _analyze_trends(
@@ -209,8 +221,27 @@ async def _call_claude(
         return SourceAnalysis(source_name=source_name, error=str(exc))
 
 
+def _extract_json(text: str) -> str:
+    """Extract the first balanced JSON object from text that may have preamble."""
+    start = text.find("{")
+    if start == -1:
+        return text
+    depth = 0
+    for i, ch in enumerate(text[start:], start):
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : i + 1]
+    return text[start:]
+
+
 def _parse_findings(raw_text: str, source_name: str) -> list[Finding]:
     """Parse JSON findings from a Claude response.
+
+    Handles both pure-JSON responses and responses where JSON follows preamble
+    text (as can happen with web search tool use).
 
     Args:
         raw_text: Raw text returned by Claude (expected to be a JSON object).
@@ -219,23 +250,26 @@ def _parse_findings(raw_text: str, source_name: str) -> list[Finding]:
     Returns:
         List of Finding objects. Returns a single low-confidence finding on parse failure.
     """
-    try:
-        data = json.loads(raw_text)
-        return [
-            Finding(
-                category=item.get("category", "General"),
-                text=item.get("text", ""),
-                confidence=normalize_confidence(item.get("confidence", "Insufficient Data")),
-            )
-            for item in data.get("findings", [])
-            if item.get("text")
-        ]
-    except (json.JSONDecodeError, AttributeError) as exc:
-        logger.warning("Could not parse findings JSON for %s: %s", source_name, exc)
-        return [
-            Finding(
-                category="Parse Error",
-                text=f"Response could not be parsed as JSON. Preview: {raw_text[:300]}",
-                confidence="Low",
-            )
-        ]
+    for candidate in (raw_text, _extract_json(raw_text)):
+        try:
+            data = json.loads(candidate)
+            return [
+                Finding(
+                    category=item.get("category", "General"),
+                    text=item.get("text", ""),
+                    confidence=normalize_confidence(item.get("confidence", "Insufficient Data")),
+                )
+                for item in data.get("findings", [])
+                if item.get("text")
+            ]
+        except (json.JSONDecodeError, AttributeError):
+            continue
+
+    logger.warning("Could not parse findings JSON for %s. Preview: %s", source_name, raw_text[:200])
+    return [
+        Finding(
+            category="Parse Error",
+            text=f"Response could not be parsed as JSON. Preview: {raw_text[:300]}",
+            confidence="Low",
+        )
+    ]

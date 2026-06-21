@@ -116,6 +116,30 @@ Return a JSON object with this exact structure:
 {trends_text}"""
 
 
+# ── NEWS WEB SEARCH ───────────────────────────────────────────────────────
+
+NEWS_WEB_SEARCH_USER_PROMPT = """Search the web for recent news about {company_name} ({ticker}).
+
+Focus on the last 60 days. Look for:
+- Earnings results, revenue figures, or financial guidance updates
+- Product launches, acquisitions, or major strategic announcements
+- Leadership changes or significant executive statements
+- Competitive moves, partnerships, or market share signals
+- Regulatory, legal, or reputational developments
+- Analyst reactions, rating changes, or coverage shifts
+
+After your search, extract 5-8 findings. Return ONLY a valid JSON object — no text before or after:
+{{
+  "findings": [
+    {{
+      "category": "<category name>",
+      "text": "<finding text>",
+      "confidence": "High" | "Medium" | "Low" | "Insufficient Data"
+    }}
+  ]
+}}"""
+
+
 # ── SYNTHESIS ──────────────────────────────────────────────────────────────
 
 SYNTHESIS_SYSTEM_PROMPT = """You are the lead analyst synthesizing competitive intelligence from multiple independent sources into a coherent brief.

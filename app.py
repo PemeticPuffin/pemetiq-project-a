@@ -28,9 +28,9 @@ st.set_page_config(
 
 from src.analysis.per_source import analyze_all_sources
 from src.analysis.synthesis import compare_synthesize, synthesize
-from src.data.news_api import fetch_news
 from src.data.sec_edgar import fetch_latest_filing
 from src.data.trends import fetch_trends
+from src.ui.pdf_export import generate_brief_pdf
 from src.entity_resolver import ResolvedEntity, resolve_company
 from src.ui.components import (
     render_company_brief,
@@ -115,11 +115,22 @@ if "mode" not in st.session_state:
 
 def _render_brief(entity, analyses, synthesis) -> None:
     """Render the full CI brief."""
-    st.markdown(
-        '<div class="section-label">Executive Summary</div>'
-        '<div class="section-subtitle">Synthesized from SEC filings, recent news, and search trend data.</div>',
-        unsafe_allow_html=True,
-    )
+    col_hdr, col_btn = st.columns([5, 1])
+    with col_hdr:
+        st.markdown(
+            '<div class="section-label">Executive Summary</div>'
+            '<div class="section-subtitle">Synthesized from SEC filings, recent news, and search trend data.</div>',
+            unsafe_allow_html=True,
+        )
+    with col_btn:
+        pdf_bytes = generate_brief_pdf(entity, synthesis, analyses)
+        st.download_button(
+            label="Export PDF",
+            data=pdf_bytes,
+            file_name=f"cadillaq_{entity.legal_name.lower().replace(' ', '_').replace(',', '')}.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+        )
     render_company_brief(entity, synthesis)
     render_takeaways_anchor(synthesis.key_takeaways)
     render_synthesis_sections(synthesis)
@@ -137,18 +148,15 @@ def _resolve(query: str) -> tuple[ResolvedEntity, bool]:
 
 def _run_pipeline(entity: ResolvedEntity) -> dict:
     """Fetch data (parallel) and run per-source analysis for one company."""
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=2) as pool:
         f_filing = pool.submit(fetch_latest_filing, entity.cik, entity.legal_name)
-        f_news = pool.submit(fetch_news, entity.legal_name, entity.ticker)
         f_trends = pool.submit(fetch_trends, entity.legal_name, entity.ticker)
         filing = f_filing.result()
-        news_data = f_news.result()
         trends_data = f_trends.result()
     analyses = analyze_all_sources(
         company_name=entity.legal_name,
         ticker=entity.ticker,
         filing=filing,
-        news_data=news_data,
         trends_data=trends_data,
     )
     return {"entity": entity, "analyses": analyses}
