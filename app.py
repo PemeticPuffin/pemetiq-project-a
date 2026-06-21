@@ -3,6 +3,7 @@
 import base64
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import streamlit as st
@@ -135,10 +136,14 @@ def _resolve(query: str) -> tuple[ResolvedEntity, bool]:
 
 
 def _run_pipeline(entity: ResolvedEntity) -> dict:
-    """Fetch data and run per-source analysis for one company."""
-    filing = fetch_latest_filing(entity.cik, entity.legal_name)
-    news_data = fetch_news(entity.legal_name, entity.ticker)
-    trends_data = fetch_trends(entity.legal_name, entity.ticker)
+    """Fetch data (parallel) and run per-source analysis for one company."""
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        f_filing = pool.submit(fetch_latest_filing, entity.cik, entity.legal_name)
+        f_news = pool.submit(fetch_news, entity.legal_name, entity.ticker)
+        f_trends = pool.submit(fetch_trends, entity.legal_name, entity.ticker)
+        filing = f_filing.result()
+        news_data = f_news.result()
+        trends_data = f_trends.result()
     analyses = analyze_all_sources(
         company_name=entity.legal_name,
         ticker=entity.ticker,
@@ -193,12 +198,12 @@ if run_clicked:
                         "SEC filing data will be unavailable for this company."
                     )
 
-            progress.progress(15, text=f"Fetching data for {entity_a.legal_name} and {entity_b.legal_name}...")
-            r_a = _run_pipeline(entity_a)
-            r_b = _run_pipeline(entity_b)
-
-            progress.progress(55, text="Analyzing sources with Claude...")
-            # Per-source analyses were already run inside _run_pipeline
+            progress.progress(15, text=f"Fetching and analyzing {entity_a.legal_name} and {entity_b.legal_name} in parallel...")
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                f_a = pool.submit(_run_pipeline, entity_a)
+                f_b = pool.submit(_run_pipeline, entity_b)
+                r_a = f_a.result()
+                r_b = f_b.result()
 
             progress.progress(75, text="Running head-to-head comparison synthesis...")
             comparison = compare_synthesize(

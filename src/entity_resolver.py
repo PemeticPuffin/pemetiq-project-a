@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 import requests
+import streamlit as st
 
 from config import SEC_USER_AGENT, REQUEST_TIMEOUT, MAX_RETRIES
 
@@ -28,6 +29,7 @@ class ResolvedEntity:
     ticker: str
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
 def resolve_company(query: str) -> ResolvedEntity:
     """Resolve a company name or ticker to its SEC identity.
 

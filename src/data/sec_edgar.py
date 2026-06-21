@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import requests
+import streamlit as st
 
 from config import SEC_USER_AGENT, REQUEST_TIMEOUT, MAX_RETRIES
 
@@ -49,6 +50,7 @@ class SECFiling:
     fetch_error: Optional[str] = None
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
 def fetch_latest_filing(cik: int, company_name: str) -> SECFiling:
     """Fetch the latest 10-K or 10-Q for a company and extract key sections.
 

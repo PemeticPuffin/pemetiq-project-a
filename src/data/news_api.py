@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import requests
+import streamlit as st
 from dotenv import load_dotenv
 
 from config import NEWS_LOOKBACK_DAYS, REQUEST_TIMEOUT, MAX_RETRIES
@@ -43,6 +44,7 @@ class NewsData:
         return len(self.articles)
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
 def fetch_news(company_name: str, ticker: str, max_articles: int = 30) -> NewsData:
     """Fetch recent news for a company from Finnhub.
 

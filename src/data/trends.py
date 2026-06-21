@@ -4,6 +4,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Optional
 
+import streamlit as st
+
 logger = logging.getLogger(__name__)
 
 
@@ -20,6 +22,7 @@ class TrendsData:
     fetch_error: Optional[str] = None
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
 def fetch_trends(company_name: str, ticker: str) -> TrendsData:
     """Fetch 90-day Google Trends data for a company.
 
