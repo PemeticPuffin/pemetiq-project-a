@@ -107,18 +107,21 @@ def fetch_latest_filing(cik: int, company_name: str) -> SECFiling:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def fetch_comparison_filings(
-    cik: int, company_name: str
+    cik: int, company_name: str, mode: str = "yoy"
 ) -> tuple[SECFiling, Optional[SECFiling], str]:
-    """Fetch the latest filing plus its year-ago comparable for drift analysis.
+    """Fetch the latest filing plus a comparable earlier filing for drift analysis.
 
-    Picks the most recent 10-K/10-Q as the current filing, then finds the same
-    form type whose period-of-report is closest to one year earlier (year-ago
-    same quarter). Falls back to the immediately-prior same-form filing when no
-    year-ago match exists.
+    Picks the most recent 10-K/10-Q as the current filing, then selects the
+    comparable based on `mode`:
+      - "yoy" (default): the same form type whose period-of-report is closest to
+        one year earlier (year-ago same quarter), falling back to the
+        immediately-prior same-form filing.
+      - "qoq": the immediately-prior same-form filing (prior quarter).
 
     Args:
         cik: SEC CIK number.
         company_name: Human-readable company name.
+        mode: "yoy" or "qoq".
 
     Returns:
         Tuple of (current filing, comparable filing or None, basis label). The
@@ -159,7 +162,7 @@ def fetch_comparison_filings(
         )
 
     current_ref = refs[0]
-    comparable_ref, basis = _pick_comparable(current_ref, refs)
+    comparable_ref, basis = _pick_comparable(current_ref, refs, mode)
 
     current = _fetch_ref(current_ref, company_name, cik)
     comparable = _fetch_ref(comparable_ref, company_name, cik) if comparable_ref else None
@@ -197,9 +200,9 @@ def _list_target_filings(cik: int) -> list[FilingRef]:
 
 
 def _pick_comparable(
-    current: FilingRef, refs: list[FilingRef]
+    current: FilingRef, refs: list[FilingRef], mode: str = "yoy"
 ) -> tuple[Optional[FilingRef], str]:
-    """Choose the year-ago same-quarter filing, or fall back to the prior filing.
+    """Choose the comparable filing for the given mode.
 
     Returns (comparable_ref or None, basis_label).
     """
@@ -207,6 +210,13 @@ def _pick_comparable(
         r for r in refs
         if r.form_type == current.form_type and r.report_date and r is not current
     ]
+
+    # Quarter-over-quarter: the immediately-prior same-form filing.
+    if mode == "qoq":
+        if same_form:
+            basis = "prior quarter" if current.form_type == "10-Q" else "prior-year filing"
+            return same_form[0], basis
+        return None, ""
 
     # Primary: same form, report date closest to one year before the current one.
     if current.report_date:

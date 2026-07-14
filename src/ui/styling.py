@@ -548,6 +548,9 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
 .drift-badge-intensified { background: #FDF0DD; color: #B4650A; }
 .drift-badge-dropped     { background: #EEF0F3; color: #55606B; }
 .drift-badge-tone        { background: #DFF0EC; color: #16534A; }
+.drift-badge-emerged     { background: #DFF0EC; color: #16534A; }
+.drift-badge-faded       { background: #EEF0F3; color: #55606B; }
+.drift-badge-sentiment   { background: #E6F1FB; color: #1C5A86; }
 .drift-card-label {
     font-size: 0.92rem;
     font-weight: 600;

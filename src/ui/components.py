@@ -723,6 +723,58 @@ def render_drift_section(drift) -> None:
     )
 
 
+_NEWS_DRIFT_BADGES = {
+    "emerged": "Emerged",
+    "faded": "Faded",
+    "sentiment": "Sentiment",
+}
+
+
+def render_news_drift_section(news_drift) -> None:
+    """Render the News Narrative Shift section — how the media story changed."""
+    if news_drift is None or not getattr(news_drift, "available", False):
+        return
+    if not news_drift.items:
+        return
+
+    esc = html.escape
+    basis = "Media coverage"
+    if news_drift.prior_period:
+        basis += f" · since {esc(news_drift.prior_period)}"
+
+    header = (
+        f'<div class="drift-header">'
+        f'<span class="drift-title">News Narrative Shift</span>'
+        f'<span class="drift-basis">{basis}</span>'
+        f'</div>'
+    )
+    headline = (
+        f'<div class="drift-headline">{esc(news_drift.headline)}</div>'
+        if news_drift.headline else ""
+    )
+
+    cards = ""
+    for item in news_drift.items:
+        badge = _NEWS_DRIFT_BADGES.get(item.kind, item.kind.title())
+        label_html = (
+            f'<span class="drift-card-label">{esc(item.label)}</span>'
+            if item.label else ""
+        )
+        cards += (
+            f'<div class="drift-card">'
+            f'<div class="drift-card-head">'
+            f'<span class="drift-badge drift-badge-{item.kind}">{badge}</span>'
+            f'{label_html}</div>'
+            f'<p class="drift-card-summary">{esc(item.summary)}</p>'
+            f'</div>'
+        )
+
+    st.markdown(
+        header + headline + f'<div class="drift-cards">{cards}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 def render_footer() -> None:
     """Render the Pemetiq footer with Primary-Logo."""
     logo_uri = _b64_img(_ASSETS / "primary-logo.png")

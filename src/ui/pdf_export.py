@@ -143,12 +143,19 @@ _DRIFT_PDF_LABELS = {
     "tone": "TONE",
 }
 
+_NEWS_DRIFT_PDF_LABELS = {
+    "emerged": "EMERGED",
+    "faded": "FADED",
+    "sentiment": "SENTIMENT",
+}
+
 
 def generate_brief_pdf(
     entity: ResolvedEntity,
     synthesis: SynthesisResult,
     analyses: list[SourceAnalysis],
     drift=None,
+    news_drift=None,
 ) -> bytes:
     """Build a PDF brief and return it as bytes for st.download_button."""
     pdf = _PDF(orientation="P", unit="mm", format="A4")
@@ -201,6 +208,30 @@ def generate_brief_pdf(
                 pdf.set_text_color(*_GRAY)
                 pdf.set_x(pdf.l_margin + 2)
                 pdf.multi_cell(0, 4, _clean(f'"{item.quote}"'))
+            pdf.ln(2)
+
+    # ── News Narrative Shift ─────────────────────────────────────────────
+    if news_drift is not None and getattr(news_drift, "available", False) and news_drift.items:
+        period = news_drift.prior_period or "the prior period"
+        pdf.section(f"News Narrative Shift  (since {period})")
+        if news_drift.headline:
+            pdf.set_font("Helvetica", "I", 9)
+            pdf.set_text_color(*_NAVY)
+            pdf.multi_cell(0, 5, _clean(news_drift.headline))
+            pdf.ln(1)
+        for item in news_drift.items:
+            label = _NEWS_DRIFT_PDF_LABELS.get(item.kind, item.kind.upper())
+            pdf.set_font("Helvetica", "B", 8)
+            pdf.set_text_color(*_TEAL)
+            pdf.set_x(pdf.l_margin + 2)
+            pdf.cell(24, 5, f"[{label}]")
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.set_text_color(*_NAVY)
+            pdf.multi_cell(0, 5, _clean(item.label))
+            pdf.set_font("Helvetica", "", 8)
+            pdf.set_text_color(*_NAVY)
+            pdf.set_x(pdf.l_margin + 2)
+            pdf.multi_cell(0, 4, _clean(item.summary))
             pdf.ln(2)
 
     # ── Key Takeaways ────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 """Cadillaq — Competitive intelligence autopilot. Streamlit entry point."""
 
 import base64
+import datetime
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -27,6 +28,7 @@ st.set_page_config(
 )
 
 from src.analysis.drift import detect_drift
+from src.analysis.news_drift import detect_news_drift
 from src.analysis.per_source import analyze_all_sources
 from src.analysis.synthesis import compare_synthesize, synthesize
 from src.data.sec_edgar import fetch_comparison_filings, fetch_latest_filing
@@ -38,6 +40,7 @@ from src.ui.components import (
     render_comparison_view,
     render_drift_section,
     render_footer,
+    render_news_drift_section,
     render_source_findings,
     render_synthesis_sections,
     render_takeaways_anchor,
@@ -78,6 +81,7 @@ mode = st.radio(
 st.markdown("<div style='height:0.75rem'></div>", unsafe_allow_html=True)
 
 # ── Search inputs ──────────────────────────────────────────────────────────
+drift_mode = "yoy"
 if mode == "Single company":
     col_input, col_btn = st.columns([5, 1], gap="small")
     with col_input:
@@ -89,6 +93,18 @@ if mode == "Single company":
     with col_btn:
         run_clicked = st.button("Analyze", type="primary", use_container_width=True)
     query_b = ""
+    st.markdown(
+        '<div style="font-size:0.8rem;color:#6B7580;margin:0.4rem 0 -0.4rem;">'
+        'Narrative drift compares the latest filing against:</div>',
+        unsafe_allow_html=True,
+    )
+    _drift_choice = st.radio(
+        "Narrative drift comparison",
+        ["Year-ago quarter", "Prior quarter"],
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+    drift_mode = "yoy" if _drift_choice == "Year-ago quarter" else "qoq"
 else:
     col_a, col_b, col_btn = st.columns([3, 3, 1], gap="small")
     with col_a:
@@ -115,7 +131,7 @@ if "mode" not in st.session_state:
     st.session_state.mode = "single"
 
 
-def _render_brief_header(entity, synthesis, analyses, drift) -> None:
+def _render_brief_header(entity, synthesis, analyses, drift, news_drift=None) -> None:
     """Render the Executive Summary label and the Export PDF button."""
     col_hdr, col_btn = st.columns([5, 1])
     with col_hdr:
@@ -125,7 +141,7 @@ def _render_brief_header(entity, synthesis, analyses, drift) -> None:
             unsafe_allow_html=True,
         )
     with col_btn:
-        pdf_bytes = generate_brief_pdf(entity, synthesis, analyses, drift)
+        pdf_bytes = generate_brief_pdf(entity, synthesis, analyses, drift, news_drift)
         st.download_button(
             label="Export PDF",
             data=pdf_bytes,
@@ -135,12 +151,13 @@ def _render_brief_header(entity, synthesis, analyses, drift) -> None:
         )
 
 
-def _render_brief(entity, analyses, synthesis, drift=None) -> None:
+def _render_brief(entity, analyses, synthesis, drift=None, news_drift=None) -> None:
     """Render the full CI brief (used when replaying a stored result)."""
-    _render_brief_header(entity, synthesis, analyses, drift)
+    _render_brief_header(entity, synthesis, analyses, drift, news_drift)
     render_company_brief(entity, synthesis)
     render_takeaways_anchor(synthesis.key_takeaways)
     render_drift_section(drift)
+    render_news_drift_section(news_drift)
     render_synthesis_sections(synthesis)
     render_source_findings(analyses)
     render_takeaways_section(synthesis.key_takeaways)
@@ -190,19 +207,30 @@ if run_clicked:
             slot_brief = st.empty()
             slot_anchor = st.empty()
             slot_drift = st.empty()
+            slot_news_drift = st.empty()
             slot_synth = st.empty()
             slot_find = st.empty()
             slot_take = st.empty()
 
             status.write("Fetching SEC filings, recent news, and search trends…")
             with ThreadPoolExecutor(max_workers=2) as pool:
-                f_cmp = pool.submit(fetch_comparison_filings, entity.cik, entity.legal_name)
+                f_cmp = pool.submit(fetch_comparison_filings, entity.cik, entity.legal_name, drift_mode)
                 f_trends = pool.submit(fetch_trends, entity.legal_name, entity.ticker)
                 current, comparable, basis = f_cmp.result()
                 trends_data = f_trends.result()
 
+            # Anchor news-narrative drift on the comparable filing's period, when available.
+            prior_period = ""
+            if comparable is not None and comparable.report_date:
+                try:
+                    prior_period = datetime.date.fromisoformat(
+                        comparable.report_date
+                    ).strftime("%b %Y")
+                except ValueError:
+                    prior_period = ""
+
             status.write("Analyzing sources and detecting narrative drift…")
-            with ThreadPoolExecutor(max_workers=3) as pool:
+            with ThreadPoolExecutor(max_workers=4) as pool:
                 f_analyses = pool.submit(
                     analyze_all_sources,
                     company_name=entity.legal_name,
@@ -211,6 +239,9 @@ if run_clicked:
                     trends_data=trends_data,
                 )
                 f_drift = pool.submit(detect_drift, current, comparable, basis)
+                f_news_drift = pool.submit(
+                    detect_news_drift, entity.legal_name, entity.ticker, prior_period
+                )
                 analyses = f_analyses.result()
 
                 status.write("Synthesizing cross-source brief…")
@@ -226,10 +257,14 @@ if run_clicked:
                 with slot_drift.container():
                     render_drift_section(drift)
 
+                news_drift = f_news_drift.result()
+                with slot_news_drift.container():
+                    render_news_drift_section(news_drift)
+
                 synthesis = f_synth.result()
 
             with slot_header.container():
-                _render_brief_header(entity, synthesis, analyses, drift)
+                _render_brief_header(entity, synthesis, analyses, drift, news_drift)
             with slot_brief.container():
                 render_company_brief(entity, synthesis)
             with slot_anchor.container():
@@ -251,6 +286,7 @@ if run_clicked:
                 "analyses": analyses,
                 "synthesis": synthesis,
                 "drift": drift,
+                "news_drift": news_drift,
             }
             render_footer()
             st.stop()
@@ -300,7 +336,10 @@ if run_clicked:
 if st.session_state.result:
     r = st.session_state.result
     if st.session_state.mode == "single":
-        _render_brief(r["entity"], r["analyses"], r["synthesis"], r.get("drift"))
+        _render_brief(
+            r["entity"], r["analyses"], r["synthesis"],
+            r.get("drift"), r.get("news_drift"),
+        )
     else:
         render_comparison_view(
             entity_a=r["entity_a"],
