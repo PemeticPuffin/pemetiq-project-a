@@ -3,6 +3,7 @@
 import datetime
 
 from fpdf import FPDF
+from fpdf.enums import XPos, YPos
 
 from src.analysis.per_source import SourceAnalysis
 from src.analysis.synthesis import SynthesisResult
@@ -27,25 +28,46 @@ _CONF_LABELS = {
 
 
 def _clean(text: str) -> str:
-    """Replace Unicode chars that core PDF fonts can't handle."""
-    return (
-        text
-        .replace("–", "-").replace("—", "--")
-        .replace("‘", "'").replace("’", "'")
-        .replace("“", '"').replace("”", '"')
+    """Make text safe for the core PDF fonts (Helvetica is latin-1 only).
+
+    First map the common "smart" punctuation the LLM tends to emit to ASCII
+    equivalents that read well, then drop through a latin-1 catch-all so that
+    ANY remaining character the font can't encode (other dashes, arrows,
+    non-latin-1 letters, emoji, etc.) is replaced instead of raising
+    FPDFUnicodeEncodingException. The synthesis/findings text is arbitrary
+    model output, so this final guard is what actually keeps export robust.
+    """
+    text = (
+        str(text)
+        .replace("–", "-").replace("—", "--").replace("―", "--")
+        .replace("‘", "'").replace("’", "'").replace("‚", ",")
+        .replace("“", '"').replace("”", '"').replace("„", '"')
+        .replace("→", "->").replace("←", "<-").replace("™", "(TM)")
+        .replace("®", "(R)").replace("°", " deg")
         .replace("•", "*").replace("…", "...").replace("·", ".")
         .replace(" ", " ")
     )
+    # Catch-all: anything still outside latin-1 becomes "?" rather than crashing.
+    return text.encode("latin-1", "replace").decode("latin-1")
 
 
 class _PDF(FPDF):
+
+    def multi_cell(self, *args, **kwargs):
+        # fpdf2 (>=2.7) leaves the cursor at the right edge after multi_cell,
+        # which makes consecutive full-width multi_cell calls fail with
+        # "Not enough horizontal space". Restore the classic behaviour of
+        # returning to the left margin on the next line.
+        kwargs.setdefault("new_x", XPos.LMARGIN)
+        kwargs.setdefault("new_y", YPos.NEXT)
+        return super().multi_cell(*args, **kwargs)
 
     def header(self):
         self.set_font("Helvetica", "B", 7)
         self.set_text_color(*_TEAL)
         self.cell(
             0, 6,
-            "PEMETIQ  ·  CADILLAQ  —  COMPETITIVE INTELLIGENCE BRIEF",
+            _clean("PEMETIQ  ·  CADILLAQ  —  COMPETITIVE INTELLIGENCE BRIEF"),
             ln=True, align="R",
         )
         self.ln(1)
@@ -57,7 +79,7 @@ class _PDF(FPDF):
         today = datetime.date.today().strftime("%B %d, %Y")
         self.cell(
             0, 6,
-            f"Page {self.page_no()}  ·  Generated {today}  ·  cadillaq.pemetiq.com",
+            _clean(f"Page {self.page_no()}  ·  Generated {today}  ·  cadillaq.pemetiq.com"),
             align="C",
         )
 
@@ -132,7 +154,7 @@ def generate_brief_pdf(
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(*_GRAY)
     today = datetime.date.today().strftime("%B %d, %Y")
-    pdf.cell(0, 5, f"{entity.ticker}  ·  CIK {entity.cik}  ·  {today}", ln=True)
+    pdf.cell(0, 5, _clean(f"{entity.ticker}  ·  CIK {entity.cik}  ·  {today}"), ln=True)
     pdf.ln(2)
     pdf.set_draw_color(*_TEAL)
     pdf.set_line_width(0.4)
