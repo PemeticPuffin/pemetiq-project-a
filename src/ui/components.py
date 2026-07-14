@@ -788,7 +788,9 @@ def render_news_drift_section(news_drift) -> None:
         )
 
     st.markdown(
-        header + headline + f'<div class="drift-cards">{cards}</div>',
+        '<div style="margin-top:1.9rem;">'
+        + header + headline + f'<div class="drift-cards">{cards}</div>'
+        + '</div>',
         unsafe_allow_html=True,
     )
 
