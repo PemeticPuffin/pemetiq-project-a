@@ -469,6 +469,109 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
     color: #001731 !important;
     font-weight: 700 !important;
 }
+
+/* ── Narrative Drift ─────────────────────────────────────────────────────── */
+.drift-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+.drift-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #001731;
+    letter-spacing: -0.01em;
+}
+.drift-basis {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #6B7580;
+    background: #F0F4F8;
+    border-radius: 999px;
+    padding: 0.28rem 0.75rem;
+}
+.drift-headline {
+    font-size: 1.02rem;
+    font-weight: 500;
+    line-height: 1.55;
+    color: #1A2C3E;
+    margin: 0.35rem 0 1.1rem;
+}
+.drift-tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+}
+.drift-tile {
+    background: #F6F8FA;
+    border-radius: 12px;
+    padding: 0.7rem 0.85rem;
+}
+.drift-tile-label {
+    font-size: 0.76rem;
+    color: #6B7580;
+    margin-bottom: 0.15rem;
+}
+.drift-tile-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.drift-cards { display: flex; flex-direction: column; gap: 0.65rem; }
+.drift-card {
+    background: #FFFFFF;
+    border: 1px solid #E6EAEF;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    box-shadow: 0 1px 3px rgba(14, 59, 84, 0.04);
+}
+.drift-card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 0.4rem;
+    flex-wrap: wrap;
+}
+.drift-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.18rem 0.55rem;
+    border-radius: 6px;
+}
+.drift-badge-added       { background: #FCEBEA; color: #B3261E; }
+.drift-badge-intensified { background: #FDF0DD; color: #B4650A; }
+.drift-badge-dropped     { background: #EEF0F3; color: #55606B; }
+.drift-badge-tone        { background: #DFF0EC; color: #16534A; }
+.drift-card-label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #001731;
+}
+.drift-card-summary {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #46525E;
+    margin: 0;
+}
+.drift-quote {
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: #6B7580;
+    border-left: 2px solid #D5DCE3;
+    padding: 0.1rem 0 0.1rem 0.7rem;
+    margin: 0.5rem 0 0;
+}
+.drift-value-added       { color: #B3261E; }
+.drift-value-intensified { color: #B4650A; }
+.drift-value-dropped     { color: #6B7580; }
+.drift-value-tone        { color: #16534A; }
 </style>
 """
 

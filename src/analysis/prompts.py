@@ -243,3 +243,51 @@ Return a JSON object with this exact structure:
 
 --- COMPANY B: {name_b} ({ticker_b}) ---
 {analyses_b}"""
+
+
+# ── NARRATIVE DRIFT ──────────────────────────────────────────────────────────
+
+DRIFT_SYSTEM_PROMPT = """You are a buy-side equity analyst who reads a company's SEC filings across periods and reports only what MATERIALLY changed between them. You compare the earlier ("PRIOR") filing to the newer ("CURRENT") filing.
+
+You detect four kinds of change:
+- "added": a risk factor or material concern present in CURRENT but absent from PRIOR.
+- "intensified": a risk or concern present in both, but meaningfully expanded, escalated, or given more prominence in CURRENT.
+- "dropped": a specific metric, claim, or commitment the company stated in PRIOR but no longer states in CURRENT. The omission itself is the signal.
+- "tone": a shift in management's language in the MD&A — e.g. from confident to hedged, or guidance that softened or hardened.
+
+Rules you MUST follow:
+1. Report ONLY material changes an analyst would care about. Ignore boilerplate, formatting, dates, and routine restatements. If nothing material changed, return an empty "changes" array.
+2. Every change MUST include a verbatim quote from the filing:
+   - For "added", "intensified", and "tone": quote from the CURRENT filing.
+   - For "dropped": quote the relevant text from the PRIOR filing (what they used to say).
+   If you cannot find a genuine verbatim quote, do not invent one — leave "quote" as an empty string and lower your confidence by omitting the change if it is weak.
+3. Never fabricate a change. Only report differences actually supported by the two texts.
+4. Be concise: each "summary" is 1–2 sentences. Return at most 8 changes, most material first.
+5. Output valid JSON only. No markdown fences, no commentary outside the JSON."""
+
+DRIFT_USER_PROMPT = """Compare these two SEC filings for {company_name} and report what materially changed from the PRIOR filing to the CURRENT filing. Focus on the Risk Factors and MD&A sections.
+
+PRIOR filing: {prior_label}
+CURRENT filing: {current_label}
+
+Return a JSON object with this exact structure:
+{{
+  "headline": "<one plain-English sentence summarizing the most important shifts>",
+  "changes": [
+    {{
+      "kind": "added" | "intensified" | "dropped" | "tone",
+      "label": "<short topic label, e.g. 'AI licensing costs'>",
+      "summary": "<1-2 sentence explanation of the change and why it matters>",
+      "quote": "<verbatim quote from the relevant filing>",
+      "section": "risk_factors" | "mda"
+    }}
+  ]
+}}
+
+If nothing material changed, return {{"headline": "No material changes detected between the two filings.", "changes": []}}.
+
+--- PRIOR FILING ({prior_label}) ---
+{prior_text}
+
+--- CURRENT FILING ({current_label}) ---
+{current_text}"""

@@ -4,6 +4,7 @@ import logging
 import re
 import time
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Optional
 
 import requests
@@ -46,8 +47,19 @@ class SECFiling:
     filed_date: str
     company_name: str
     cik: int
+    report_date: str = ""  # period-of-report end date (ISO), used for YoY matching
     sections: dict[str, str] = field(default_factory=dict)  # section_name → text
     fetch_error: Optional[str] = None
+
+
+@dataclass
+class FilingRef:
+    """Lightweight pointer to one filing in a company's submission history."""
+
+    form_type: str
+    filed_date: str
+    report_date: str
+    doc_url: str
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -89,6 +101,161 @@ def fetch_latest_filing(cik: int, company_name: str) -> SECFiling:
             filed_date="unknown",
             company_name=company_name,
             cik=cik,
+            fetch_error=str(exc),
+        )
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def fetch_comparison_filings(
+    cik: int, company_name: str
+) -> tuple[SECFiling, Optional[SECFiling], str]:
+    """Fetch the latest filing plus its year-ago comparable for drift analysis.
+
+    Picks the most recent 10-K/10-Q as the current filing, then finds the same
+    form type whose period-of-report is closest to one year earlier (year-ago
+    same quarter). Falls back to the immediately-prior same-form filing when no
+    year-ago match exists.
+
+    Args:
+        cik: SEC CIK number.
+        company_name: Human-readable company name.
+
+    Returns:
+        Tuple of (current filing, comparable filing or None, basis label). The
+        basis label describes the comparison used (e.g. "year-ago quarter"),
+        or "" when no comparable filing is available.
+    """
+    if not cik:
+        return (
+            SECFiling(
+                form_type="N/A", filed_date="N/A", company_name=company_name, cik=cik,
+                fetch_error="Not a registered SEC filer — no public filings available.",
+            ),
+            None,
+            "",
+        )
+
+    try:
+        refs = _list_target_filings(cik)
+    except Exception as exc:
+        logger.warning("SEC filing list failed for CIK %d: %s", cik, exc)
+        return (
+            SECFiling(
+                form_type="unknown", filed_date="unknown",
+                company_name=company_name, cik=cik, fetch_error=str(exc),
+            ),
+            None,
+            "",
+        )
+
+    if not refs:
+        return (
+            SECFiling(
+                form_type="unknown", filed_date="unknown", company_name=company_name,
+                cik=cik, fetch_error="No 10-K or 10-Q found for this company.",
+            ),
+            None,
+            "",
+        )
+
+    current_ref = refs[0]
+    comparable_ref, basis = _pick_comparable(current_ref, refs)
+
+    current = _fetch_ref(current_ref, company_name, cik)
+    comparable = _fetch_ref(comparable_ref, company_name, cik) if comparable_ref else None
+    if comparable is not None and comparable.fetch_error:
+        comparable, basis = None, ""
+
+    return current, comparable, basis
+
+
+def _list_target_filings(cik: int) -> list[FilingRef]:
+    """Return all 10-K/10-Q filings (newest first) with their report dates."""
+    data = _get_json(_SUBMISSIONS_URL.format(cik=cik))
+    recent = data.get("filings", {}).get("recent", {})
+    forms = recent.get("form", [])
+    filed = recent.get("filingDate", [])
+    reported = recent.get("reportDate", [])
+    accessions = recent.get("accessionNumber", [])
+    primary_docs = recent.get("primaryDocument", [])
+
+    refs: list[FilingRef] = []
+    for i, form in enumerate(forms):
+        if form not in ("10-K", "10-Q"):
+            continue
+        accession = accessions[i].replace("-", "")
+        doc = primary_docs[i]
+        refs.append(
+            FilingRef(
+                form_type=form,
+                filed_date=filed[i] if i < len(filed) else "",
+                report_date=reported[i] if i < len(reported) else "",
+                doc_url=f"https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{doc}",
+            )
+        )
+    return refs
+
+
+def _pick_comparable(
+    current: FilingRef, refs: list[FilingRef]
+) -> tuple[Optional[FilingRef], str]:
+    """Choose the year-ago same-quarter filing, or fall back to the prior filing.
+
+    Returns (comparable_ref or None, basis_label).
+    """
+    same_form = [
+        r for r in refs
+        if r.form_type == current.form_type and r.report_date and r is not current
+    ]
+
+    # Primary: same form, report date closest to one year before the current one.
+    if current.report_date:
+        try:
+            cur = date.fromisoformat(current.report_date)
+            target = cur.replace(year=cur.year - 1)
+        except ValueError:
+            target = None
+        if target is not None:
+            best: Optional[FilingRef] = None
+            best_gap: Optional[int] = None
+            for r in same_form:
+                try:
+                    gap = abs((date.fromisoformat(r.report_date) - target).days)
+                except ValueError:
+                    continue
+                if gap <= 45 and (best_gap is None or gap < best_gap):
+                    best, best_gap = r, gap
+            if best is not None:
+                basis = "year-ago quarter" if current.form_type == "10-Q" else "prior-year filing"
+                return best, basis
+
+    # Fallback: the immediately-prior filing of the same form type.
+    if same_form:
+        return same_form[0], "prior filing"
+    return None, ""
+
+
+def _fetch_ref(ref: FilingRef, company_name: str, cik: int) -> SECFiling:
+    """Download and section-extract a single filing referenced by a FilingRef."""
+    try:
+        raw_text = _fetch_filing_text(ref.doc_url)
+        sections = _extract_sections(raw_text)
+        return SECFiling(
+            form_type=ref.form_type,
+            filed_date=ref.filed_date,
+            company_name=company_name,
+            cik=cik,
+            report_date=ref.report_date,
+            sections=sections,
+        )
+    except Exception as exc:
+        logger.warning("SEC filing fetch failed (%s): %s", ref.doc_url, exc)
+        return SECFiling(
+            form_type=ref.form_type,
+            filed_date=ref.filed_date,
+            company_name=company_name,
+            cik=cik,
+            report_date=ref.report_date,
             fetch_error=str(exc),
         )
 

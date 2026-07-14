@@ -2,6 +2,7 @@
 
 import base64
 import datetime
+import html
 from pathlib import Path
 
 import streamlit as st
@@ -621,6 +622,105 @@ def render_comparison_view(
                         f'<div style="padding-top:0.5rem;">{cards_html}</div>',
                         unsafe_allow_html=True,
                     )
+
+
+_DRIFT_BADGES = {
+    "added": "New risk",
+    "intensified": "Intensified",
+    "dropped": "Dropped",
+    "tone": "Tone",
+}
+_DRIFT_TILES = [
+    ("added", "New risks", "+{n}"),
+    ("intensified", "Intensified", "▲ {n}"),
+    ("dropped", "Metrics dropped", "−{n}"),
+    ("tone", "Tone shifts", "~ {n}"),
+]
+
+
+def _period_end_label(report_date: str, filed_date: str = "") -> str:
+    """Unambiguous period-end label from an ISO date, e.g. 'Mar 2026'.
+
+    Uses the actual period-end month/year rather than a calendar-quarter number,
+    which would be misleading for companies with non-December fiscal years.
+    """
+    src = report_date or filed_date
+    try:
+        return datetime.date.fromisoformat(src).strftime("%b %Y")
+    except (ValueError, TypeError):
+        return src[:7] if src else "prior period"
+
+
+def render_drift_section(drift) -> None:
+    """Render the Narrative Drift section — what changed vs the prior filing."""
+    if drift is None or not getattr(drift, "available", False):
+        return
+
+    esc = html.escape
+    cur = _period_end_label(drift.current_report_date)
+    prior = _period_end_label(drift.prior_report_date)
+    qualifier = "quarter" if drift.current_form == "10-Q" else "year"
+    basis = f"{drift.current_form} · {qualifier} ending {cur} vs {prior}"
+    if drift.comparison_basis:
+        basis += f" · {drift.comparison_basis}"
+
+    header = (
+        f'<div class="drift-header">'
+        f'<span class="drift-title">Narrative Drift</span>'
+        f'<span class="drift-basis">{esc(basis)}</span>'
+        f'</div>'
+    )
+    headline = (
+        f'<div class="drift-headline">{esc(drift.headline)}</div>'
+        if drift.headline else ""
+    )
+
+    if not drift.items:
+        st.markdown(
+            header + headline
+            + '<div style="color:#6B7580;font-size:0.88rem;">'
+            f'No material narrative changes since the {esc(prior)} filing.</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    counts = drift.counts
+    tiles = ""
+    for kind, label, fmt in _DRIFT_TILES:
+        tiles += (
+            f'<div class="drift-tile">'
+            f'<div class="drift-tile-label">{label}</div>'
+            f'<div class="drift-tile-value drift-value-{kind}">{fmt.format(n=counts[kind])}</div>'
+            f'</div>'
+        )
+
+    cards = ""
+    for item in drift.items:
+        kind = item.kind
+        badge = _DRIFT_BADGES.get(kind, kind.title())
+        quote_html = (
+            f'<p class="drift-quote">“{esc(item.quote)}”</p>' if item.quote else ""
+        )
+        label_html = (
+            f'<span class="drift-card-label">{esc(item.label)}</span>'
+            if item.label else ""
+        )
+        cards += (
+            f'<div class="drift-card">'
+            f'<div class="drift-card-head">'
+            f'<span class="drift-badge drift-badge-{kind}">{badge}</span>'
+            f'{label_html}</div>'
+            f'<p class="drift-card-summary">{esc(item.summary)}</p>'
+            f'{quote_html}'
+            f'</div>'
+        )
+
+    st.markdown(
+        header + headline
+        + f'<div class="drift-tiles">{tiles}</div>'
+        + f'<div class="drift-cards">{cards}</div>',
+        unsafe_allow_html=True,
+    )
 
 
 def render_footer() -> None:

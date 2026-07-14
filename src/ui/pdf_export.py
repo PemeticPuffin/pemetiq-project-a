@@ -136,10 +136,19 @@ class _PDF(FPDF):
 
 # ── Public API ─────────────────────────────────────────────────────────────
 
+_DRIFT_PDF_LABELS = {
+    "added": "NEW RISK",
+    "intensified": "INTENSIFIED",
+    "dropped": "DROPPED",
+    "tone": "TONE",
+}
+
+
 def generate_brief_pdf(
     entity: ResolvedEntity,
     synthesis: SynthesisResult,
     analyses: list[SourceAnalysis],
+    drift=None,
 ) -> bytes:
     """Build a PDF brief and return it as bytes for st.download_button."""
     pdf = _PDF(orientation="P", unit="mm", format="A4")
@@ -164,6 +173,35 @@ def generate_brief_pdf(
     if synthesis.executive_summary:
         pdf.section("Executive Summary")
         pdf.body(synthesis.executive_summary)
+
+    # ── Narrative Drift ──────────────────────────────────────────────────
+    if drift is not None and getattr(drift, "available", False) and drift.items:
+        basis = drift.comparison_basis or "prior filing"
+        pdf.section(f"Narrative Drift  (vs. {basis})")
+        if drift.headline:
+            pdf.set_font("Helvetica", "I", 9)
+            pdf.set_text_color(*_NAVY)
+            pdf.multi_cell(0, 5, _clean(drift.headline))
+            pdf.ln(1)
+        for item in drift.items:
+            label = _DRIFT_PDF_LABELS.get(item.kind, item.kind.upper())
+            pdf.set_font("Helvetica", "B", 8)
+            pdf.set_text_color(*_CORAL)
+            pdf.set_x(pdf.l_margin + 2)
+            pdf.cell(24, 5, f"[{label}]")
+            pdf.set_font("Helvetica", "B", 9)
+            pdf.set_text_color(*_NAVY)
+            pdf.multi_cell(0, 5, _clean(item.label))
+            pdf.set_font("Helvetica", "", 8)
+            pdf.set_text_color(*_NAVY)
+            pdf.set_x(pdf.l_margin + 2)
+            pdf.multi_cell(0, 4, _clean(item.summary))
+            if item.quote:
+                pdf.set_font("Helvetica", "I", 8)
+                pdf.set_text_color(*_GRAY)
+                pdf.set_x(pdf.l_margin + 2)
+                pdf.multi_cell(0, 4, _clean(f'"{item.quote}"'))
+            pdf.ln(2)
 
     # ── Key Takeaways ────────────────────────────────────────────────────
     if synthesis.key_takeaways:

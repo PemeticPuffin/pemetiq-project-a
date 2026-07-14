@@ -26,15 +26,17 @@ st.set_page_config(
     layout="wide",
 )
 
+from src.analysis.drift import detect_drift
 from src.analysis.per_source import analyze_all_sources
 from src.analysis.synthesis import compare_synthesize, synthesize
-from src.data.sec_edgar import fetch_latest_filing
+from src.data.sec_edgar import fetch_comparison_filings, fetch_latest_filing
 from src.data.trends import fetch_trends
 from src.ui.pdf_export import generate_brief_pdf
 from src.entity_resolver import ResolvedEntity, resolve_company
 from src.ui.components import (
     render_company_brief,
     render_comparison_view,
+    render_drift_section,
     render_footer,
     render_source_findings,
     render_synthesis_sections,
@@ -113,8 +115,8 @@ if "mode" not in st.session_state:
     st.session_state.mode = "single"
 
 
-def _render_brief(entity, analyses, synthesis) -> None:
-    """Render the full CI brief."""
+def _render_brief_header(entity, synthesis, analyses, drift) -> None:
+    """Render the Executive Summary label and the Export PDF button."""
     col_hdr, col_btn = st.columns([5, 1])
     with col_hdr:
         st.markdown(
@@ -123,7 +125,7 @@ def _render_brief(entity, analyses, synthesis) -> None:
             unsafe_allow_html=True,
         )
     with col_btn:
-        pdf_bytes = generate_brief_pdf(entity, synthesis, analyses)
+        pdf_bytes = generate_brief_pdf(entity, synthesis, analyses, drift)
         st.download_button(
             label="Export PDF",
             data=pdf_bytes,
@@ -131,8 +133,14 @@ def _render_brief(entity, analyses, synthesis) -> None:
             mime="application/pdf",
             use_container_width=True,
         )
+
+
+def _render_brief(entity, analyses, synthesis, drift=None) -> None:
+    """Render the full CI brief (used when replaying a stored result)."""
+    _render_brief_header(entity, synthesis, analyses, drift)
     render_company_brief(entity, synthesis)
     render_takeaways_anchor(synthesis.key_takeaways)
+    render_drift_section(drift)
     render_synthesis_sections(synthesis)
     render_source_findings(analyses)
     render_takeaways_section(synthesis.key_takeaways)
@@ -168,29 +176,84 @@ if run_clicked:
         if not query.strip():
             st.warning("Please enter a company name or ticker.")
         else:
-            progress = st.progress(0, text="Resolving company identity...")
             entity, fallback = _resolve(query)
             if fallback:
                 st.warning(
                     f"**{entity.legal_name}** doesn't appear to be a publicly registered US company — "
                     "SEC filing data will be unavailable. Showing news and search trend analysis only."
                 )
-            progress.progress(20, text=f"Found **{entity.legal_name}** — fetching data...")
-            r = _run_pipeline(entity)
-            progress.progress(60, text="Synthesizing cross-source brief...")
-            synthesis = synthesize(
-                company_name=entity.legal_name,
-                ticker=entity.ticker,
-                source_analyses=r["analyses"],
+
+            status = st.status(f"Analyzing {entity.legal_name}…", expanded=True)
+
+            # Placeholders in final display order — filled as each stage completes.
+            slot_header = st.empty()
+            slot_brief = st.empty()
+            slot_anchor = st.empty()
+            slot_drift = st.empty()
+            slot_synth = st.empty()
+            slot_find = st.empty()
+            slot_take = st.empty()
+
+            status.write("Fetching SEC filings, recent news, and search trends…")
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                f_cmp = pool.submit(fetch_comparison_filings, entity.cik, entity.legal_name)
+                f_trends = pool.submit(fetch_trends, entity.legal_name, entity.ticker)
+                current, comparable, basis = f_cmp.result()
+                trends_data = f_trends.result()
+
+            status.write("Analyzing sources and detecting narrative drift…")
+            with ThreadPoolExecutor(max_workers=3) as pool:
+                f_analyses = pool.submit(
+                    analyze_all_sources,
+                    company_name=entity.legal_name,
+                    ticker=entity.ticker,
+                    filing=current,
+                    trends_data=trends_data,
+                )
+                f_drift = pool.submit(detect_drift, current, comparable, basis)
+                analyses = f_analyses.result()
+
+                status.write("Synthesizing cross-source brief…")
+                f_synth = pool.submit(
+                    synthesize,
+                    company_name=entity.legal_name,
+                    ticker=entity.ticker,
+                    source_analyses=analyses,
+                )
+
+                # Reveal the drift beat as soon as it lands, before synthesis finishes.
+                drift = f_drift.result()
+                with slot_drift.container():
+                    render_drift_section(drift)
+
+                synthesis = f_synth.result()
+
+            with slot_header.container():
+                _render_brief_header(entity, synthesis, analyses, drift)
+            with slot_brief.container():
+                render_company_brief(entity, synthesis)
+            with slot_anchor.container():
+                render_takeaways_anchor(synthesis.key_takeaways)
+            with slot_synth.container():
+                render_synthesis_sections(synthesis)
+            with slot_find.container():
+                render_source_findings(analyses)
+            with slot_take.container():
+                render_takeaways_section(synthesis.key_takeaways)
+
+            status.update(
+                label=f"Brief ready — {entity.legal_name}", state="complete", expanded=False
             )
-            progress.progress(100, text="Complete.")
-            progress.empty()
+
             st.session_state.mode = "single"
             st.session_state.result = {
                 "entity": entity,
-                "analyses": r["analyses"],
+                "analyses": analyses,
                 "synthesis": synthesis,
+                "drift": drift,
             }
+            render_footer()
+            st.stop()
 
     else:  # Compare two companies
         if not query.strip() or not query_b.strip():
@@ -237,7 +300,7 @@ if run_clicked:
 if st.session_state.result:
     r = st.session_state.result
     if st.session_state.mode == "single":
-        _render_brief(r["entity"], r["analyses"], r["synthesis"])
+        _render_brief(r["entity"], r["analyses"], r["synthesis"], r.get("drift"))
     else:
         render_comparison_view(
             entity_a=r["entity_a"],
