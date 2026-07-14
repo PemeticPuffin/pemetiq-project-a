@@ -135,7 +135,9 @@ def _parse_drift(raw_text: str, result: DriftResult) -> DriftResult:
     """Parse the JSON drift response into the given DriftResult."""
     for candidate in (raw_text, _extract_json(raw_text)):
         try:
-            data = json.loads(candidate)
+            # strict=False tolerates literal newlines/tabs inside verbatim
+            # filing quotes, which the model sometimes leaves unescaped.
+            data = json.loads(candidate, strict=False)
         except (json.JSONDecodeError, AttributeError):
             continue
         result.headline = data.get("headline", "")

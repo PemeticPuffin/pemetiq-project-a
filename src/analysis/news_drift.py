@@ -127,7 +127,7 @@ def _parse_news_drift(raw_text: str, result: NewsDriftResult) -> NewsDriftResult
     """Parse the JSON news-drift response; `available` is set only if real shifts exist."""
     for candidate in (raw_text, _extract_json(raw_text)):
         try:
-            data = json.loads(candidate)
+            data = json.loads(candidate, strict=False)
         except (json.JSONDecodeError, AttributeError):
             continue
         result.headline = _strip_citations(data.get("headline", ""))
