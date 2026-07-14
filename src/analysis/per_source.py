@@ -252,7 +252,9 @@ def _parse_findings(raw_text: str, source_name: str) -> list[Finding]:
     """
     for candidate in (raw_text, _extract_json(raw_text)):
         try:
-            data = json.loads(candidate)
+            # strict=False tolerates literal newlines/tabs the model may leave
+            # unescaped inside finding text, avoiding silent parse failures.
+            data = json.loads(candidate, strict=False)
             return [
                 Finding(
                     category=item.get("category", "General"),

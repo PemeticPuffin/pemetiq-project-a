@@ -31,7 +31,7 @@ from src.analysis.drift import detect_drift
 from src.analysis.news_drift import detect_news_drift
 from src.analysis.per_source import analyze_all_sources
 from src.analysis.synthesis import compare_synthesize, synthesize
-from src.data.sec_edgar import fetch_comparison_filings, fetch_latest_filing
+from src.data.sec_edgar import fetch_comparison_filings
 from src.data.trends import fetch_trends
 from src.ui.pdf_export import generate_brief_pdf
 from src.entity_resolver import ResolvedEntity, resolve_company
@@ -171,20 +171,25 @@ def _resolve(query: str) -> tuple[ResolvedEntity, bool]:
         return ResolvedEntity(cik=0, legal_name=query.strip().title(), ticker="N/A"), True
 
 
-def _run_pipeline(entity: ResolvedEntity) -> dict:
-    """Fetch data (parallel) and run per-source analysis for one company."""
+def _run_pipeline(entity: ResolvedEntity, drift_mode: str = "yoy") -> dict:
+    """Fetch data (parallel), run per-source analysis and narrative drift for one company."""
     with ThreadPoolExecutor(max_workers=2) as pool:
-        f_filing = pool.submit(fetch_latest_filing, entity.cik, entity.legal_name)
+        f_cmp = pool.submit(fetch_comparison_filings, entity.cik, entity.legal_name, drift_mode)
         f_trends = pool.submit(fetch_trends, entity.legal_name, entity.ticker)
-        filing = f_filing.result()
+        current, comparable, basis = f_cmp.result()
         trends_data = f_trends.result()
-    analyses = analyze_all_sources(
-        company_name=entity.legal_name,
-        ticker=entity.ticker,
-        filing=filing,
-        trends_data=trends_data,
-    )
-    return {"entity": entity, "analyses": analyses}
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        f_analyses = pool.submit(
+            analyze_all_sources,
+            company_name=entity.legal_name,
+            ticker=entity.ticker,
+            filing=current,
+            trends_data=trends_data,
+        )
+        f_drift = pool.submit(detect_drift, current, comparable, basis)
+        analyses = f_analyses.result()
+        drift = f_drift.result()
+    return {"entity": entity, "analyses": analyses, "drift": drift}
 
 
 # ── Pipeline ───────────────────────────────────────────────────────────────
@@ -305,10 +310,10 @@ if run_clicked:
                         "SEC filing data will be unavailable for this company."
                     )
 
-            progress.progress(15, text=f"Fetching and analyzing {entity_a.legal_name} and {entity_b.legal_name} in parallel...")
+            progress.progress(15, text=f"Analyzing {entity_a.legal_name} and {entity_b.legal_name} and detecting narrative drift in parallel...")
             with ThreadPoolExecutor(max_workers=2) as pool:
-                f_a = pool.submit(_run_pipeline, entity_a)
-                f_b = pool.submit(_run_pipeline, entity_b)
+                f_a = pool.submit(_run_pipeline, entity_a, drift_mode)
+                f_b = pool.submit(_run_pipeline, entity_b, drift_mode)
                 r_a = f_a.result()
                 r_b = f_b.result()
 
@@ -330,6 +335,8 @@ if run_clicked:
                 "entity_b": entity_b,
                 "analyses_b": r_b["analyses"],
                 "comparison": comparison,
+                "drift_a": r_a.get("drift"),
+                "drift_b": r_b.get("drift"),
             }
 
 # ── Render stored result ───────────────────────────────────────────────────
@@ -347,6 +354,8 @@ if st.session_state.result:
             entity_b=r["entity_b"],
             analyses_b=r["analyses_b"],
             comparison=r["comparison"],
+            drift_a=r.get("drift_a"),
+            drift_b=r.get("drift_b"),
         )
 else:
     st.markdown(

@@ -430,6 +430,8 @@ def render_comparison_view(
     entity_b: ResolvedEntity,
     analyses_b: list[SourceAnalysis],
     comparison: ComparisonResult,
+    drift_a=None,
+    drift_b=None,
 ) -> None:
     """Render the full head-to-head comparison view.
 
@@ -439,6 +441,8 @@ def render_comparison_view(
         entity_b: Resolved entity for company B.
         analyses_b: Per-source analyses for company B.
         comparison: Completed comparison synthesis result.
+        drift_a: Narrative-drift result for company A (optional).
+        drift_b: Narrative-drift result for company B (optional).
     """
     # ── Company cards ──────────────────────────────────────────────────────
     st.markdown(
@@ -563,6 +567,20 @@ def render_comparison_view(
         else:
             st.caption("No watch signals identified.")
 
+    # ── Per-company Narrative Drift ────────────────────────────────────────
+    if (drift_a is not None and getattr(drift_a, "available", False)) or \
+       (drift_b is not None and getattr(drift_b, "available", False)):
+        st.markdown(
+            '<div style="margin-top:2rem;margin-bottom:0.5rem;">'
+            '<div class="signal-section-header"><div class="signal-dot"></div>'
+            '<div class="signal-section-title">Narrative Drift</div></div>'
+            '<div class="signal-section-subtitle">How each company\'s own filing narrative has shifted since the comparable prior period.</div>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+        render_drift_section(drift_a, heading=f"Narrative Drift — {entity_a.legal_name}")
+        render_drift_section(drift_b, heading=f"Narrative Drift — {entity_b.legal_name}")
+
     render_takeaways_section(comparison.key_takeaways, compare=True)
 
     # ── Per-source findings — side by side tabs ────────────────────────────
@@ -651,7 +669,7 @@ def _period_end_label(report_date: str, filed_date: str = "") -> str:
         return src[:7] if src else "prior period"
 
 
-def render_drift_section(drift) -> None:
+def render_drift_section(drift, heading: str = "Narrative Drift") -> None:
     """Render the Narrative Drift section — what changed vs the prior filing."""
     if drift is None or not getattr(drift, "available", False):
         return
@@ -666,7 +684,7 @@ def render_drift_section(drift) -> None:
 
     header = (
         f'<div class="drift-header">'
-        f'<span class="drift-title">Narrative Drift</span>'
+        f'<span class="drift-title">{esc(heading)}</span>'
         f'<span class="drift-basis">{esc(basis)}</span>'
         f'</div>'
     )

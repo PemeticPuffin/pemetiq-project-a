@@ -152,7 +152,7 @@ def _parse_comparison(
 ) -> ComparisonResult:
     """Parse JSON comparison output from Claude into a ComparisonResult."""
     try:
-        data = json.loads(raw_text)
+        data = json.loads(raw_text, strict=False)
         edges = [
             CompetitiveEdge(
                 company=e.get("company", ""),
@@ -249,7 +249,7 @@ def _parse_synthesis(raw_text: str, company_name: str, ticker: str) -> Synthesis
         SynthesisResult with all fields populated, or error set on parse failure.
     """
     try:
-        data = json.loads(raw_text)
+        data = json.loads(raw_text, strict=False)
         contradictions = [
             Contradiction(
                 claim=c.get("claim", ""),
