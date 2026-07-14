@@ -1,12 +1,24 @@
 """Fetch Google Trends search interest data via pytrends."""
 
 import logging
+import random
+import time
 from dataclasses import dataclass, field
 from typing import Optional
 
 import streamlit as st
 
 logger = logging.getLogger(__name__)
+
+# Google rate-limits pytrends aggressively (HTTP 429). Retry a couple of times
+# with short, jittered backoff — most 429s are transient and clear within a few
+# seconds. Trends runs concurrently with the SEC fetch, so this delay is hidden.
+_MAX_ATTEMPTS = 3
+_BACKOFF_BASE = 1.2  # seconds; attempt N waits ~_BACKOFF_BASE * N (+ jitter)
+
+
+class _TrendsRateLimited(Exception):
+    """Raised when Trends can't be fetched, to keep failures out of the cache."""
 
 
 @dataclass
@@ -22,11 +34,12 @@ class TrendsData:
     fetch_error: Optional[str] = None
 
 
-@st.cache_data(ttl=3600, show_spinner=False)
 def fetch_trends(company_name: str, ticker: str) -> TrendsData:
     """Fetch 90-day Google Trends data for a company.
 
-    Falls back gracefully if pytrends is unavailable or Google rate-limits.
+    Retries transient rate-limits with backoff, and crucially does NOT cache a
+    failed fetch — a one-off 429 would otherwise poison the hour-long cache and
+    show "unavailable" for every subsequent run. Successful fetches are cached.
 
     Args:
         company_name: Company name to use as the search keyword.
@@ -36,62 +49,90 @@ def fetch_trends(company_name: str, ticker: str) -> TrendsData:
         TrendsData with interest_over_time and related_queries, or fetch_error set.
     """
     try:
+        return _fetch_trends_cached(company_name, ticker)
+    except Exception as exc:
+        # Raised only when every retry failed. Returned (not re-raised) so the
+        # brief degrades gracefully — and NOT cached, so the next run retries.
+        logger.warning("Google Trends unavailable for %s: %s", company_name, exc)
+        return TrendsData(
+            company_name=company_name,
+            ticker=ticker,
+            fetch_error=str(exc),
+        )
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def _fetch_trends_cached(company_name: str, ticker: str) -> TrendsData:
+    """Fetch and cache Trends data. Raises on failure so failures stay uncached.
+
+    st.cache_data does not cache exceptions, so raising here keeps a transient
+    rate-limit out of the cache while still caching successful results.
+    """
+    try:
         from pytrends.request import TrendReq
     except ImportError:
+        # Permanent condition — safe (and useful) to cache.
         return TrendsData(
             company_name=company_name,
             ticker=ticker,
             fetch_error="pytrends not installed",
         )
 
-    short_name = _shorten_name(company_name)
+    keyword = _shorten_name(company_name)
+    last_exc: Optional[Exception] = None
 
-    try:
-        pytrends = TrendReq(hl="en-US", tz=360, timeout=(10, 25))
-        keyword = short_name
-
-        pytrends.build_payload([keyword], timeframe="today 3-m", geo="US")
-        iot_df = pytrends.interest_over_time()
-
-        interest_over_time: list[dict] = []
-        if iot_df is not None and not iot_df.empty and keyword in iot_df.columns:
-            for date, row in iot_df.iterrows():
-                interest_over_time.append({
-                    "date": date.strftime("%Y-%m-%d"),
-                    "value": int(row[keyword]),
-                })
-
-        related_queries: dict = {"top": [], "rising": []}
+    for attempt in range(1, _MAX_ATTEMPTS + 1):
         try:
-            rq = pytrends.related_queries()
-            if rq and keyword in rq:
-                top_df = rq[keyword].get("top")
-                rising_df = rq[keyword].get("rising")
-                if top_df is not None and not top_df.empty:
-                    related_queries["top"] = top_df.head(10).to_dict("records")
-                if rising_df is not None and not rising_df.empty:
-                    related_queries["rising"] = rising_df.head(10).to_dict("records")
+            pytrends = TrendReq(hl="en-US", tz=360, timeout=(10, 25))
+            pytrends.build_payload([keyword], timeframe="today 3-m", geo="US")
+            iot_df = pytrends.interest_over_time()
+
+            interest_over_time: list[dict] = []
+            if iot_df is not None and not iot_df.empty and keyword in iot_df.columns:
+                for date, row in iot_df.iterrows():
+                    interest_over_time.append({
+                        "date": date.strftime("%Y-%m-%d"),
+                        "value": int(row[keyword]),
+                    })
+
+            related_queries: dict = {"top": [], "rising": []}
+            try:
+                rq = pytrends.related_queries()
+                if rq and keyword in rq:
+                    top_df = rq[keyword].get("top")
+                    rising_df = rq[keyword].get("rising")
+                    if top_df is not None and not top_df.empty:
+                        related_queries["top"] = top_df.head(10).to_dict("records")
+                    if rising_df is not None and not rising_df.empty:
+                        related_queries["rising"] = rising_df.head(10).to_dict("records")
+            except Exception as exc:
+                logger.warning("Could not fetch related queries: %s", exc)
+
+            logger.info(
+                "Fetched %d trend data points for %s (attempt %d)",
+                len(interest_over_time), company_name, attempt,
+            )
+            return TrendsData(
+                company_name=company_name,
+                ticker=ticker,
+                interest_over_time=interest_over_time,
+                related_queries=related_queries,
+            )
+
         except Exception as exc:
-            logger.warning("Could not fetch related queries: %s", exc)
+            last_exc = exc
+            if attempt < _MAX_ATTEMPTS:
+                delay = _BACKOFF_BASE * attempt + random.uniform(0, 0.6)
+                logger.info(
+                    "Trends attempt %d/%d for %s failed (%s); retrying in %.1fs",
+                    attempt, _MAX_ATTEMPTS, company_name, exc, delay,
+                )
+                time.sleep(delay)
 
-        logger.info(
-            "Fetched %d trend data points for %s", len(interest_over_time), company_name
-        )
-        return TrendsData(
-            company_name=company_name,
-            ticker=ticker,
-            interest_over_time=interest_over_time,
-            related_queries=related_queries,
-        )
-
-    except Exception as exc:
-        # Google rate-limits aggressively — this is expected and non-fatal
-        logger.warning("Google Trends fetch failed for %s: %s", company_name, exc)
-        return TrendsData(
-            company_name=company_name,
-            ticker=ticker,
-            fetch_error=str(exc),
-        )
+    # Every attempt failed — raise so this failure is not cached by st.cache_data.
+    raise _TrendsRateLimited(
+        str(last_exc) if last_exc else "Google Trends unavailable"
+    )
 
 
 def format_trends_for_prompt(trends_data: TrendsData) -> str:
