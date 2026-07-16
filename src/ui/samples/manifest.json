@@ -1,8 +1,23 @@
 {
- "updated": "2026-07-15",
+ "updated": "2026-07-16",
  "samples": [
-  {"slug": "palantir", "label": "Palantir", "ticker": "PLTR", "generated_on": "2026-07-15"},
-  {"slug": "nvidia", "label": "Nvidia", "ticker": "NVDA", "generated_on": "2026-07-15"},
-  {"slug": "apple", "label": "Apple", "ticker": "AAPL", "generated_on": "2026-07-15"}
+  {
+   "slug": "palantir",
+   "label": "Palantir",
+   "ticker": "PLTR",
+   "generated_on": "2026-07-15"
+  },
+  {
+   "slug": "apple",
+   "label": "Apple",
+   "ticker": "AAPL",
+   "generated_on": "2026-07-15"
+  },
+  {
+   "slug": "goldman-sachs",
+   "label": "Goldman Sachs",
+   "ticker": "GS",
+   "generated_on": "2026-07-16"
+  }
  ]
 }
