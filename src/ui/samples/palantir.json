@@ -1,0 +1,294 @@
+{
+ "generated_on": "2026-07-15",
+ "entity": {
+  "cik": 1321655,
+  "legal_name": "Palantir Technologies Inc.",
+  "ticker": "PLTR"
+ },
+ "analyses": [
+  {
+   "source_name": "SEC Filing",
+   "findings": [
+    {
+     "category": "Business Model and Revenue Drivers",
+     "text": "Palantir derives significant revenue from a limited customer base, with top three customers accounting for 15-18% of revenue across recent periods. The company's growth strategy depends heavily on expanding relationships with existing customers through larger deployments, with top three customers averaging 13 years of tenure as of March 31, 2026. Revenue is recognized over multi-year contract terms (1-5 years), creating timing mismatches between upfront sales costs and revenue recognition.",
+     "confidence": "High"
+    },
+    {
+     "category": "Business Model and Revenue Drivers",
+     "text": "Sales cycles are long and unpredictable, typically lasting 6-9 months but extending to one year or more. The company invests considerable time and expense in pilot deployments at no or low cost to customers with no guarantee of conversion to revenue-generating contracts. This capital-intensive sales model creates significant upfront costs before revenue realization.",
+     "confidence": "High"
+    },
+    {
+     "category": "Competitive Positioning and Moat",
+     "text": "Palantir operates complex technology platforms that are critical to customers' operations, particularly in government and defense sectors. The company's platforms require lengthy implementation processes and deep integration with customer systems, creating switching costs. However, the filing does not explicitly detail proprietary technological advantages or barriers to entry beyond complexity.",
+     "confidence": "Medium"
+    },
+    {
+     "category": "Key Risks - Regulatory and Operational",
+     "text": "The company faces significant regulatory risks including complex U.S. and non-U.S. privacy, data protection, and technology protection laws. The EU AI Act and FASA are specifically mentioned as impacting operations. Additionally, government contract dependency creates exposure to budget cycles, continuing resolutions, and appropriations lapses, which have historically delayed revenue recognition.",
+     "confidence": "High"
+    },
+    {
+     "category": "Key Risks - Customer Concentration and Contract Terms",
+     "text": "Many customer contracts permit termination for convenience with varying notice periods, and the U.S. federal government cannot exercise contract options more than one year in advance. As of December 31, 2025, total remaining deal value was $11.2 billion ($6.8B commercial, $4.4B government), but the company historically has not realized full deal value due to terminations, renegotiations, and macroeconomic contingencies.",
+     "confidence": "High"
+    },
+    {
+     "category": "Financial Trajectory Signals - Profitability and Margins",
+     "text": "Management anticipates operating expenses will continue to increase as the company expands business verticals, upgrades infrastructure, hires employees, and invests in R&D and sales/marketing. The filing states the company may not be able to maintain profitability in the future, and costs are generally incurred upfront while revenue is recognized over contract terms, creating near-term margin pressure.",
+     "confidence": "High"
+    },
+    {
+     "category": "Financial Trajectory Signals - Quarterly Volatility",
+     "text": "Results of operations and key business measures are likely to fluctuate significantly on a quarterly basis. The company typically closes a large portion of sales in the last several weeks of quarters, and large individual transactions can shift between quarters. Seasonality is pronounced, with Q1 typically lower and Q3-Q4 substantially higher, driven by government fiscal year-end (September 30) and commercial customer budgeting (December 31).",
+     "confidence": "High"
+    },
+    {
+     "category": "Strategic Initiatives and Pivots",
+     "text": "The company is implementing new go-to-market mechanisms including self-service models and shorter, more cost-effective programs such as bootcamps to reduce pilot deployment costs. Management is also expanding the direct sales force and collaborating with third-party service providers, though success of these changes is uncertain.",
+     "confidence": "Medium"
+    },
+    {
+     "category": "Key Risks - Technology and Infrastructure Dependency",
+     "text": "Palantir depends on third-party cloud infrastructure (AWS, Microsoft Azure) and other third-party services for critical operations. The company has no control over these providers' operations and faces risks from service disruptions, pricing increases, or termination of relationships. Failure to meet minimum usage commitments with cloud providers could result in penalties or fees.",
+     "confidence": "High"
+    },
+    {
+     "category": "Management Tone and Forward Guidance",
+     "text": "Management's tone is cautious regarding future performance. The filing emphasizes numerous uncertainties and risks, including inability to sustain revenue growth, challenges in maintaining profitability, and difficulty predicting future results. No specific forward guidance on revenue, margins, or earnings is provided; instead, management emphasizes the unpredictability of quarterly results and the difficulty of forecasting.",
+     "confidence": "High"
+    }
+   ],
+   "error": null
+  },
+  {
+   "source_name": "Recent News",
+   "findings": [
+    {
+     "category": "Earnings & Financial Results",
+     "text": "Palantir reported Q1 2026 revenue growth of 85% year-over-year with adjusted EPS of $0.33 beating consensus of $0.27. Company raised full-year 2026 revenue guidance to $7.65-$7.66 billion, implying 71% YoY growth, up 10 points from prior guidance. Rule of 40 score reached 145%, comparable to AI infrastructure peers NVIDIA, Micron, and SK Hynix.",
+     "confidence": "High"
+    },
+    {
+     "category": "Financial Guidance",
+     "text": "For Q2 2026, company guided to $1.797-$1.801 billion revenue (versus $1.68 billion consensus), with adjusted income from operations guidance of $1.063-$1.067 billion. Analysts expect EPS of $0.28-$0.35, up 115% from $0.13 in year-ago quarter. Company has beaten EPS estimates in four consecutive quarters.",
+     "confidence": "High"
+    },
+    {
+     "category": "Strategic Partnerships & Commercial Expansion",
+     "text": "Palantir announced partnership framework with Rackspace (effective July 2026) to deploy Foundry and AIP in mid-market and regulated environments. Rackspace achieved ~400 Palantir certifications across functions. First joint deployment closed in under 2 months with 94% reduction in quote cycle time for solar manufacturer. Also announced multiyear, multimillion-dollar deals with McCarthy Building Companies, Kirkland & Ellis, and Zeta Global in construction, legal, and marketing sectors.",
+     "confidence": "High"
+    },
+    {
+     "category": "Government & Defense Strategy",
+     "text": "CEO Alex Karp expects U.S. business (government and commercial combined) to double again in 2027. Company expanded partnership with Stellantis (5-year agreement, March 2026) to include Palantir Foundry and AIP. Expanded partnership with NVIDIA for sovereign AI models for U.S. government agencies announced in early July 2026.",
+     "confidence": "High"
+    },
+    {
+     "category": "Analyst Sentiment & Price Targets",
+     "text": "DA Davidson upgraded PLTR from Neutral to Buy on July 2, 2026, raising price target to $175. Citi raised price target to $225 (from $210). Consensus analyst price target ~$174-194. Analyst ratings: 20 Buy, 7 Hold, 1 Moderate Sell, 1 Strong Sell (from 29 analysts). Wedbush analyst Daniel Ives maintains Buy with $230 target (75%+ upside). Stock down ~25% YTD 2026 despite strong fundamentals.",
+     "confidence": "High"
+    },
+    {
+     "category": "Executive Commentary & Company Narrative",
+     "text": "CEO Alex Karp stated in Q1 shareholder letter that financial results 'demonstrate a level of strength that dwarfs the performance of essentially every software company in history at this scale.' Revenue per employee reached $1.5 million annually. Company messaging emphasizes focus on 'commodity cognition' and AI operational leverage as competitive differentiator versus pure AI model providers.",
+     "confidence": "High"
+    },
+    {
+     "category": "Risk Signals & Market Concerns",
+     "text": "Social media discussion notes reported contract cancellations in UK and other Western markets, commercial deployment hurdles, and AI lab rollout issues raising caution about near-term growth. CEO recently sounded 'alarm over AI costs and control' in mid-July 2026, causing stock to slide. Analyst concern about rising talent acquisition expenses and capacity constraints as demand outpaces supply.",
+     "confidence": "Medium"
+    },
+    {
+     "category": "Market Valuation & Stock Performance",
+     "text": "PLTR trading at $129-134 range (mid-July 2026), down from 52-week high of $207.52 and approaching 52-week low of $106.37. Market cap $309.3 billion. Stock volatility remains elevated despite outperformance on fundamentals. Analysts cite valuation concerns driving YTD 2026 underperformance despite 85% revenue growth and strong profitability metrics.",
+     "confidence": "High"
+    }
+   ],
+   "error": null
+  },
+  {
+   "source_name": "Google Trends",
+   "findings": [
+    {
+     "category": "Overall Search Interest Trend",
+     "text": "Palantir Technologies search interest has declined significantly over the past 4 weeks (average 16.5) compared to the 90-day average (42.2), representing a 61% drop. This indicates waning consumer attention after an earlier peak, suggesting either completion of a news cycle or reduced investor/public interest in the company.",
+     "confidence": "High"
+    },
+    {
+     "category": "Notable Spike and Subsequent Collapse",
+     "text": "Search interest peaked at 100 (week of 2026-07-09 at value 29, with peak occurring earlier in the period) followed by a dramatic drop to 0 on 2026-07-16. This suggests a significant triggering event (likely earnings announcement, executive news, or major contract announcement) that generated intense but short-lived interest, with the collapse indicating the news cycle concluded or was displaced by other market events.",
+     "confidence": "High"
+    },
+    {
+     "category": "Volatility and Stabilization Pattern",
+     "text": "Weekly interest fluctuated between 16\u201329 for most of the 12-week period (2026-07-05 through 2026-07-15), indicating baseline consumer interest remained relatively modest and volatile before the final week's collapse to zero. This pattern suggests Palantir lacks sustained organic search momentum outside of event-driven spikes.",
+     "confidence": "High"
+    },
+    {
+     "category": "Divergence from Investment Narrative",
+     "text": "The sharp decline in search interest (especially the 0 reading in the most recent week) contrasts with typical patterns for companies with strong positive investment narratives. If Palantir were experiencing sustained bullish sentiment or major business wins, search interest would likely stabilize at elevated levels rather than collapse. This suggests either negative news, investor disappointment, or market saturation of the story.",
+     "confidence": "Medium"
+    },
+    {
+     "category": "Data Completeness Gap",
+     "text": "The zero reading on 2026-07-16 is unusual and may indicate insufficient search volume to register on the 0\u2013100 scale, a data reporting anomaly, or a genuine cliff in interest. Without related query data or news context for that specific week, the true cause cannot be definitively determined.",
+     "confidence": "Low"
+    }
+   ],
+   "error": null
+  }
+ ],
+ "synthesis": {
+  "company_name": "Palantir Technologies Inc.",
+  "ticker": "PLTR",
+  "executive_summary": "Palantir enters mid-2026 with exceptional headline financials \u2014 85% YoY revenue growth, a Rule of 40 score of 145%, and raised full-year guidance to $7.65B \u2014 but the underlying picture is more complex. The SEC filing reveals structural vulnerabilities: customer concentration, termination-for-convenience clauses, a capital-intensive pilot-based sales model, and explicit management warnings about future profitability. Recent news confirms strong commercial momentum and analyst upgrades, yet the stock is down ~25% YTD from its 52-week high, suggesting the market is discounting valuation risk even as fundamentals outperform. Google Trends data shows a sharp collapse in public search interest following a brief spike, indicating event-driven rather than sustained organic momentum. The convergence of high valuation multiples, concentrated revenue, and management's own cautionary tone on cost trajectories creates a risk profile that diverges meaningfully from the bullish narrative dominating analyst commentary.",
+  "key_takeaways": [
+   "Monitor contract retention and deal value realization closely: the $11.2B remaining deal value figure is materially overstated if termination-for-convenience clauses are exercised \u2014 any acceleration in contract cancellations (already flagged in social media signals) would be a leading indicator of revenue miss risk.",
+   "Treat the 85% revenue growth figure as a ceiling, not a floor: the SEC filing explicitly warns of quarterly volatility, back-weighted seasonality, and the inability to guarantee pilot-to-contract conversion \u2014 investors should stress-test guidance against historical deal slippage patterns before extrapolating growth.",
+   "The Rackspace and NVIDIA partnerships are strategically significant and warrant close tracking: if mid-market channel deployment via Rackspace scales and sovereign AI contracts with U.S. agencies materialize, these represent genuine TAM expansion; failure to convert these partnerships into disclosed revenue within 2-3 quarters would be a red flag.",
+   "Valuation risk is the dominant near-term concern: at a $309B market cap against $7.65B guided revenue (~40x forward revenue), any guidance miss or margin compression from rising talent and infrastructure costs could trigger outsized multiple compression \u2014 the stock's 25% YTD decline despite outperformance suggests the market is already pricing in this risk asymmetry.",
+   "Watch CEO public commentary as a leading sentiment indicator: the mid-July 2026 'alarm over AI costs and control' statement directly correlated with a stock slide and a Google Trends collapse to zero \u2014 Karp's public posture has demonstrated measurable market impact and should be tracked as a real-time signal."
+  ],
+  "reinforcing_signals": [
+   "Customer concentration and dependency risk is confirmed by both the SEC filing (top 3 customers = 15-18% of revenue, averaging 13 years tenure) and the Recent News source (CEO doubling down on deepening existing relationships rather than broad new customer acquisition) \u2014 both sources converge on a land-and-expand model that is high-reward but high-dependency.",
+   "Rising cost pressure is flagged by both the SEC filing (management warning that operating expenses will continue to increase, with costs incurred upfront and revenue recognized over time) and Recent News (analyst concern about rising talent acquisition expenses and capacity constraints) \u2014 both sources independently signal near-term margin pressure.",
+   "Government contract volatility is reinforced by the SEC filing (exposure to budget cycles, continuing resolutions, appropriations lapses) and Recent News (social media reports of contract cancellations in UK and Western markets) \u2014 both sources suggest government revenue is less predictable than headline deal value implies.",
+   "Event-driven rather than sustained momentum is corroborated by both Recent News (stock down 25% YTD despite strong fundamentals, elevated volatility) and Google Trends (search interest collapsed to zero after a brief spike, no sustained organic baseline) \u2014 both sources suggest the bullish narrative is episodic rather than durable.",
+   "AI operational leverage as a competitive differentiator is consistently emphasized in Recent News (CEO 'commodity cognition' framing, NVIDIA partnership for sovereign AI, Rule of 40 of 145%) and implicitly supported by the SEC filing's description of deep platform integration and switching costs \u2014 both sources converge on platform stickiness as the core moat claim."
+  ],
+  "contradictions": [
+   {
+    "claim": "Management confidence in future profitability and growth trajectory",
+    "source_a": "SEC Filing: Management explicitly states the company 'may not be able to maintain profitability in the future,' emphasizes unpredictability of quarterly results, and provides no specific forward guidance \u2014 tone is materially cautious.",
+    "source_b": "Recent News: CEO Alex Karp publicly stated Q1 results 'demonstrate a level of strength that dwarfs the performance of essentially every software company in history at this scale,' and guided to 71% YoY full-year growth with raised guidance \u2014 tone is aggressively bullish.",
+    "significance": "This is a material contradiction between the legally constrained SEC disclosure posture and the public investor relations narrative. For competitive intelligence, it raises the question of whether the bullish public messaging is masking structural risks that management is legally obligated to disclose but commercially incentivized to downplay. Investors relying solely on earnings call commentary face information asymmetry."
+   },
+   {
+    "claim": "Sustainability and durability of current growth rates",
+    "source_a": "Recent News: 85% YoY revenue growth, Rule of 40 of 145%, four consecutive EPS beats, raised guidance \u2014 framed as evidence of durable, compounding growth comparable to NVIDIA and Micron.",
+    "source_b": "SEC Filing: Revenue recognition occurs over multi-year contract terms (1-5 years), sales cycles are 6-9 months to over a year, pilot deployments generate no guaranteed conversion, and quarterly results are explicitly described as likely to 'fluctuate significantly' \u2014 structural factors that make sustained 85% growth rates mechanically difficult.",
+    "significance": "The growth rate reported in Recent News reflects a specific measurement window that may not account for the revenue recognition lag described in the SEC filing. If large deals signed in prior periods are now flowing through recognition, current reported growth may overstate the underlying booking momentum \u2014 a critical distinction for forecasting forward quarters."
+   },
+   {
+    "claim": "Public and investor interest in Palantir as a sustained phenomenon",
+    "source_a": "Recent News: Strong analyst upgrades (DA Davidson to Buy, Citi raising target to $225, Wedbush at $230), 20 Buy ratings from 29 analysts, CEO making high-profile public statements \u2014 suggests elevated and sustained institutional attention.",
+    "source_b": "Google Trends: Search interest collapsed to 0 in the week of July 16, 2026, with a 61% decline in the 4-week average versus the 90-day average \u2014 suggests public interest is episodic and has sharply faded.",
+    "significance": "Divergence between institutional analyst bullishness and collapsing retail/public search interest may indicate the investment thesis is increasingly concentrated among institutional holders with limited new retail capital inflow. This matters for valuation sustainability at current multiples, which historically require broad market participation to maintain."
+   }
+  ],
+  "notable_absences": [
+   "No disclosure of win rates or competitive displacement data: given Palantir's claims of platform superiority and the SEC filing's acknowledgment of a competitive landscape, the complete absence of any data on head-to-head win rates against Microsoft, AWS, or defense-focused AI competitors (e.g., Booz Allen, Leidos, Anduril) is a significant gap \u2014 this information would be essential to validate the moat claim.",
+   "No detailed breakdown of pilot-to-paid conversion rates: the SEC filing extensively describes the capital-intensive pilot deployment model, but neither the filing nor news sources provide any historical or current conversion rate data \u2014 this is the single most important operational metric for validating the sales model's efficiency and is conspicuously absent.",
+   "No discussion of international government revenue trajectory: given that social media signals flagged contract cancellations in the UK and Western markets, the absence of any detailed international government revenue breakdown or commentary from management or analysts is a meaningful gap \u2014 international government exposure could be a hidden risk.",
+   "No competitor response analysis: given Palantir's 85% growth and aggressive partnership announcements, the complete absence of any documented competitive response from Microsoft (Azure AI), Salesforce, or defense-sector incumbents is unusual \u2014 either competitors are not responding (validating the moat) or the intelligence sources are not capturing it.",
+   "No discussion of AI model dependency risk: Palantir's AIP platform is built on top of third-party large language models, yet neither the SEC filing nor news sources address the risk of commoditization of the underlying AI models that power AIP \u2014 as model capabilities converge across providers, the differentiation of the orchestration layer (Palantir's core claim) may erode."
+  ],
+  "watch_signals": [
+   "Rackspace partnership conversion velocity: the first joint deployment closed in under 2 months with a 94% reduction in quote cycle time \u2014 if this speed-to-value metric is reproducible at scale in mid-market, it would represent a structural change in Palantir's historically slow sales cycle and should be tracked in Q2-Q3 2026 earnings disclosures.",
+   "CEO public commentary on AI costs and control: the mid-July 2026 statement that triggered a stock slide and a Google Trends collapse to zero suggests Karp's public posture is a leading indicator of near-term sentiment shifts \u2014 monitor for any further public statements that diverge from the bullish earnings narrative.",
+   "UK and Western market government contract status: social media signals of cancellations in these markets have not been confirmed or denied by management \u2014 any formal disclosure of international government contract losses in Q2 2026 results would validate this as a systemic risk rather than isolated noise.",
+   "Talent acquisition cost trajectory: both the SEC filing (rising operating expenses) and analyst commentary (capacity constraints) flag human capital costs as a pressure point \u2014 watch for stock-based compensation as a percentage of revenue and headcount growth rates in upcoming filings as early indicators of margin compression.",
+   "NVIDIA sovereign AI partnership materialization: the expanded NVIDIA partnership for U.S. government sovereign AI models announced in early July 2026 is strategically significant but unquantified \u2014 any disclosed contract values or agency names in Q2-Q3 2026 would be a strong signal of whether this partnership translates to incremental revenue or remains a marketing narrative.",
+   "Google Trends recovery pattern post-July 16 collapse: the zero reading is anomalous and may reflect a data artifact or genuine interest cliff \u2014 monitoring whether search interest recovers to the 16-29 baseline or remains suppressed will indicate whether the July earnings cycle successfully re-engaged retail investor attention."
+  ],
+  "error": null
+ },
+ "drift": {
+  "comparison_basis": "year-ago quarter",
+  "current_form": "10-Q",
+  "current_report_date": "2026-03-31",
+  "prior_form": "10-Q",
+  "prior_report_date": "2025-03-31",
+  "headline": "Palantir's total remaining deal value more than doubled to $11.2B, a new 'failure to manage growth' risk factor was added, AI risk language was expanded to include agentic AI, and geopolitical risk disclosures were intensified to include Iran strikes on private infrastructure.",
+  "items": [
+   {
+    "kind": "intensified",
+    "label": "Total Remaining Deal Value",
+    "summary": "Total remaining deal value more than doubled from $5.4B to $11.2B (commercial from $3.1B to $6.8B; government from $2.3B to $4.4B), signaling a dramatic acceleration in contract backlog that also raises execution and revenue-recognition risk.",
+    "quote": "As of December 31, 2025, the total remaining deal value...was $11.2 billion. Of our total remaining deal value, as of December 31, 2025, $6.8 billion was the remaining deal value of our contracts with commercial customers and $4.4 billion was the remaining deal value of our contracts with government customers.",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "added",
+    "label": "Failure to Manage Growth Risk",
+    "summary": "A new standalone risk factor on managing rapid growth was added, disclosing 4,395 full-time employees and warning that operational, IT, and internal-control resources may be inadequate to support continued expansion \u2014 a risk not separately called out in the prior filing.",
+    "quote": "If we fail to manage future growth effectively, our business could be harmed...we face challenges of integrating, developing, retaining, and motivating our employee base of 4,395 full-time employees as of March 31, 2026 in various countries around the world. In the event of continued growth of our operations, our operational resources, including our information technology systems, our employee base, or our internal controls and procedures may not be adequate to support our operations and deployments.",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "intensified",
+    "label": "AI Risk Scope Expanded to Agentic AI",
+    "summary": "The AI risk factor was broadened from 'machine learning and large language models' to explicitly include 'large language, and other generative or agentic AI models and applications, and software functionality to operationalize the foregoing,' reflecting Palantir's deeper product commitment to agentic AI and the associated liability surface.",
+    "quote": "issues raised by the use of AI (including machine learning, large language, and other generative or agentic AI models and applications, and software functionality to operationalize the foregoing) in our platforms and business may result in reputational harm or liability",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "intensified",
+    "label": "Middle East / Iran Geopolitical Risk",
+    "summary": "The current filing escalates geopolitical risk language to specifically name U.S. and Israeli strikes on Iran and retaliatory Iranian strikes targeting private company infrastructure including data centers \u2014 a materially more specific and operational threat than the prior filing's generic Middle East conflict reference.",
+    "quote": "the recent escalation of conflict in the Middle East has led to retaliatory strikes by Iran that have targeted, and may continue to target, private company infrastructure including data centers.",
+    "section": "mda"
+   },
+   {
+    "kind": "intensified",
+    "label": "Geopolitical Risk in Sales Cycle Factors",
+    "summary": "The sales cycle risk factor now specifically references 'the escalation of hostilities resulting from the recent strikes by the United States and Israel on Iran and retaliatory strikes related thereto' and changes 'heightened interest rates' to 'fluctuating interest rates' and 'imposition of tariffs' to 'potential or actual imposition of tariffs,' reflecting a more acute and current threat environment.",
+    "quote": "uncertainty about macroeconomic conditions (including as a result of the ongoing Russia-Ukraine conflict and related economic sanctions, the conflict resulting from Hamas' attack on Israel and the ongoing conflicts in the Middle East, including the escalation of hostilities resulting from the recent strikes by the United States and Israel on Iran and retaliatory strikes related thereto, fluctuating interest rates, monetary policy changes, foreign currency fluctuations, or the potential or actual imposition of tariffs or other impacts on trade relations)",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "dropped",
+    "label": "Share Repurchase Program Risk Factor",
+    "summary": "The prior filing's risk factor summary bullet explicitly called out the Share Repurchase Program ('there are no guarantees that our Share Repurchase Program will result in increased shareholder value'), which has been removed from the current filing's risk factor summary, suggesting the program is no longer a highlighted concern.",
+    "quote": "there are no guarantees that our Share Repurchase Program (as defined below) will result in increased shareholder value",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "dropped",
+    "label": "Net Loss History Profitability Caveat in Risk Summary",
+    "summary": "The prior filing led its risk factor summary with 'until recent quarters, we had a history of incurring net losses'; the current filing removes this historical loss reference from the summary list entirely, reflecting improved confidence in the profitability track record.",
+    "quote": "until recent quarters, we had a history of incurring net losses, and we anticipate our operating expenses will continue to increase, and we may not be able to maintain profitability in the future",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "tone",
+    "label": "Customer Data Access / Digital Sovereignty Language Strengthened",
+    "summary": "The current filing adds a new affirmative statement that Palantir lacks technical ability to independently access customer data and frames its privacy posture around 'customer digital sovereignty commitments,' replacing the prior filing's more passive framing that simply said the company does not provide customer information without legal process.",
+    "quote": "While we do not have the technical ability to independently access customer data and any requests for customer data must be directed to customers themselves...In light of our confidentiality, privacy, and customer digital sovereignty commitments, we may legally challenge law enforcement or other government requests",
+    "section": "mda"
+   }
+  ],
+  "error": null,
+  "available": true
+ },
+ "news_drift": {
+  "prior_period": "Mar 2025",
+  "headline": "From unstoppable AI momentum to contested valuation: Palantir's narrative shifted from enterprise dominance concerns to government contract risk and competitive threats.",
+  "items": [
+   {
+    "kind": "emerged",
+    "label": "Government contract and international risk",
+    "summary": "UK Parliament's recommendation against renewing the ~$440M NHS contract elevated concerns about contract renewal risk and international government expansion, a threat that was absent from early 2025 optimistic coverage."
+   },
+   {
+    "kind": "emerged",
+    "label": "Competitive pressure from AI labs",
+    "summary": "Recent coverage highlights Michael Burry's concerns about Anthropic and other closed-source LLM providers eroding Palantir's competitive edge in sensitive data deployments, replacing the 2025 narrative of market dominance."
+   },
+   {
+    "kind": "emerged",
+    "label": "Sovereign AI and government-focused narrative",
+    "summary": "July 2026 coverage pivoted to sovereign AI initiatives with Nvidia targeting U.S. military and critical infrastructure, replacing the broader enterprise AI adoption story of early 2025."
+   },
+   {
+    "kind": "sentiment",
+    "label": "From growth optimism to valuation skepticism",
+    "summary": "March 2025 celebrated accelerating enterprise momentum and Rule of 40 achievement; recent coverage acknowledges strong financials but expresses doubt whether the rebound reflects fundamentals or merely sentiment repair, with P/E ratios highlighted as unsustainably high."
+   }
+  ],
+  "error": null,
+  "available": true
+ }
+}

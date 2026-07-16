@@ -46,6 +46,7 @@ from src.ui.components import (
     render_takeaways_anchor,
     render_takeaways_section,
 )
+from src.ui.samples import SAMPLES, load_sample, sample_available
 from src.ui.styling import CUSTOM_CSS
 
 # ── Inject brand CSS ───────────────────────────────────────────────────────
@@ -122,6 +123,23 @@ else:
     with col_btn:
         run_clicked = st.button("Compare", type="primary", use_container_width=True)
 
+# ── Sample brief chips ─────────────────────────────────────────────────────
+_available_samples = [s for s in SAMPLES if sample_available(s)]
+if mode == "Single company" and _available_samples:
+    cols = st.columns([2.2] + [1] * len(_available_samples) + [3], gap="small")
+    with cols[0]:
+        st.markdown(
+            '<div style="font-size:0.8rem;color:#6B7580;padding-top:0.45rem;'
+            'text-align:right;">Or see an instant sample brief:</div>',
+            unsafe_allow_html=True,
+        )
+    for i, slug in enumerate(_available_samples):
+        with cols[i + 1]:
+            if st.button(SAMPLES[slug], key=f"sample_{slug}", use_container_width=True):
+                st.session_state.result = load_sample(slug)
+                st.session_state.mode = "single"
+                st.rerun()
+
 st.markdown("<div style='height:1.5rem'></div>", unsafe_allow_html=True)
 
 # ── Session state ──────────────────────────────────────────────────────────
@@ -151,8 +169,27 @@ def _render_brief_header(entity, synthesis, analyses, drift, news_drift=None) ->
         )
 
 
-def _render_brief(entity, analyses, synthesis, drift=None, news_drift=None) -> None:
+def _render_sample_banner(generated_on: str) -> None:
+    """Small banner shown above cached sample briefs."""
+    try:
+        nice_date = datetime.date.fromisoformat(generated_on).strftime("%b %d, %Y")
+    except ValueError:
+        nice_date = generated_on
+    st.markdown(
+        f'<div style="background:#F0F4F8;border:1px solid rgba(14,59,84,0.12);'
+        f'border-radius:8px;padding:0.55rem 0.9rem;margin-bottom:1rem;'
+        f'font-size:0.82rem;color:#39485A;">'
+        f'<strong>Cached sample</strong> · generated {nice_date} · '
+        f'enter any public US company above for a fresh live brief.</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def _render_brief(entity, analyses, synthesis, drift=None, news_drift=None,
+                  sample_generated_on=None) -> None:
     """Render the full CI brief (used when replaying a stored result)."""
+    if sample_generated_on:
+        _render_sample_banner(sample_generated_on)
     _render_brief_header(entity, synthesis, analyses, drift, news_drift)
     render_company_brief(entity, synthesis)
     render_takeaways_anchor(synthesis.key_takeaways)
@@ -346,6 +383,7 @@ if st.session_state.result:
         _render_brief(
             r["entity"], r["analyses"], r["synthesis"],
             r.get("drift"), r.get("news_drift"),
+            sample_generated_on=r.get("sample_generated_on"),
         )
     else:
         render_comparison_view(

@@ -1,0 +1,295 @@
+{
+ "generated_on": "2026-07-15",
+ "entity": {
+  "cik": 320193,
+  "legal_name": "Apple Inc.",
+  "ticker": "AAPL"
+ },
+ "analyses": [
+  {
+   "source_name": "SEC Filing",
+   "findings": [
+    {
+     "category": "Business Model and Revenue Drivers",
+     "text": "Apple's revenue is heavily concentrated in iPhone sales (56.9B in Q2 2026, 22% YoY growth) and Services (31.0B, 16% YoY growth), with iPhone representing approximately 51% of total net sales. Services gross margin of 76.7% significantly exceeds Products gross margin of 38.7%, indicating a strategic shift toward higher-margin recurring revenue.",
+     "confidence": "High"
+    },
+    {
+     "category": "Business Model and Revenue Drivers",
+     "text": "Geographic diversification shows strong growth across all regions: Greater China +28% YoY (Q2), Europe +15%, and Rest of Asia Pacific +25%, with foreign currency strength providing favorable tailwinds. However, the filing notes that currency fluctuations and macroeconomic conditions directly impact results.",
+     "confidence": "High"
+    },
+    {
+     "category": "Competitive Positioning and Moat",
+     "text": "Apple's ecosystem integration and brand strength are evidenced by Services growth (16% YoY) driven by advertising, App Store, and cloud services, suggesting strong customer lock-in. However, regulatory pressures on App Store commission structures (DMA fines of \u20ac500M and ongoing U.S. litigation) pose material threats to this competitive advantage.",
+     "confidence": "High"
+    },
+    {
+     "category": "Key Risks - Regulatory",
+     "text": "The EU Digital Markets Act has resulted in a \u20ac500M fine (April 2025) and preliminary findings in a second investigation that could impose fines up to 10% of annual worldwide net sales. The U.S. Epic Games litigation resulted in a Ninth Circuit Court order (December 2025) requiring Apple to allow link-outs but permitting commission charges, with further modifications pending. These regulatory actions directly threaten App Store revenue and business model.",
+     "confidence": "High"
+    },
+    {
+     "category": "Key Risks - Operational and Competitive",
+     "text": "Apple faces material supply chain risks: manufacturing purchase obligations of $44.6B (with $43.9B due within 12 months) and disclosed supply constraints for advanced semiconductors, NAND storage, and DRAM. The filing explicitly states the Company 'expects these trends to intensify,' which could 'materially adversely affect demand' and 'negatively impact revenue, costs, gross margin.'",
+     "confidence": "High"
+    },
+    {
+     "category": "Key Risks - Tariffs and Trade",
+     "text": "Tariff exposure is significant and uncertain: new tariffs on imports from China, India, Japan, South Korea, Taiwan, Vietnam, and the EU were announced starting Q2 2025. While a February 2026 Supreme Court ruling struck down certain tariffs and Apple is seeking refunds, the filing notes 'the ultimate impact remains uncertain' and further tariffs under Section 232 semiconductor investigation could be imposed, with potential material adverse impact on supply chain and gross margin.",
+     "confidence": "High"
+    },
+    {
+     "category": "Financial Trajectory Signals - Growth and Margins",
+     "text": "Total net sales grew 17% YoY in Q2 2026 ($111.2B vs. $95.4B), with gross margin expanding 220 basis points to 49.3% from 47.1% YoY, driven by favorable product mix and foreign currency strength. However, management explicitly warns that 'gross margins will be subject to volatility and downward pressure' due to component costs, tariffs, and competitive pressures.",
+     "confidence": "High"
+    },
+    {
+     "category": "Financial Trajectory Signals - Operating Expenses and Cash Flow",
+     "text": "R&D expenses surged 34% YoY in Q2 2026 ($11.4B vs. $8.6B), representing 10% of net sales (up from 9%), driven by 'infrastructure-related costs and headcount-related expenses.' This suggests significant investment in AI and new technologies. Capital return remains robust: $11.0B in share repurchases in Q2 2026 and a new $100B authorization announced April 30, 2026, with dividend raised from $0.26 to $0.27 per share.",
+     "confidence": "High"
+    },
+    {
+     "category": "Strategic Initiatives and Pivots",
+     "text": "Apple announced multiple new products in Q2 2026 (iPhone 17e, MacBook Pro/Air/Neo, iPad Air, AirPods Max 2), signaling continued hardware innovation. However, the filing emphasizes AI integration as a strategic priority, with explicit risk disclosure that AI features 'can increase safety risks, including exposing users to harmful, inaccurate or other negative content,' indicating management is navigating significant execution risk.",
+     "confidence": "High"
+    },
+    {
+     "category": "Management Tone and Forward Guidance",
+     "text": "Management tone is cautious: the filing contains extensive forward-looking statements with explicit warnings about macroeconomic headwinds, supply constraints, tariff uncertainty, and regulatory risks. Management states it 'assumes no obligation to revise or update' guidance and emphasizes that 'actual results may differ significantly.' No specific forward revenue or margin guidance is provided, reflecting elevated uncertainty.",
+     "confidence": "High"
+    }
+   ],
+   "error": null
+  },
+  {
+   "source_name": "Recent News",
+   "findings": [
+    {
+     "category": "Earnings & Financial Performance",
+     "text": "<cite index=\"7-12\">Apple Q2 2026 revenue reached $111.2B (up 17% YoY) and EPS hit $2.01 (up 22% YoY), both exceeding Wall Street estimates despite supply constraints.</cite> <cite index=\"4-5\">The company's board authorized an additional $100 billion in stock repurchases and declared a cash dividend of 27 cents per share, up 4%.</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Product Strategy & Innovation",
+     "text": "<cite index=\"9-1,9-2,9-3\">At WWDC 2026 on June 8, Apple unveiled updated software and a new version of Siri. New versions of iOS, macOS, and Apple's other software platforms will be previewed in June at WWDC before launching in September.</cite> <cite index=\"9-5\">The new Siri will use AI, and it will have chatbot capabilities similar to ChatGPT or Claude.</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Leadership Changes",
+     "text": "<cite index=\"18-1,18-7\">Apple announced that Tim Cook will become executive chairman of Apple's board of directors and John Ternus, senior vice president of Hardware Engineering, will become Apple's next chief executive officer effective on September 1, 2026.</cite> <cite index=\"22-4\">Ternus aims to find strong design leadership and re-establish design as Apple's central priority, potentially revitalizing the company's innovative product development approach.</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Product Roadmap & Competitive Positioning",
+     "text": "<cite index=\"10-17,10-18\">Beyond the usual annual updates to iPhones and Apple Watches in September, Apple's all-new smart home hub could still arrive this year, and a foldable iPhone Ultra and long-awaited updates to the Apple TV and HomePod mini are also expected.</cite> <cite index=\"4-9\">Cook said on the earnings call that the iPhone 17 is now the 'most popular lineup in our history'.</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Pricing & Supply Chain",
+     "text": "<cite index=\"44-7,44-8\">On June 25, Apple told the market it was raising prices on MacBooks, iPads, and other devices to cover the cost of a global memory chip shortage. The stock fell sharply that day, wiping out everything it had gained year to date.</cite> <cite index=\"5-11\">Rising memory costs are pressuring product margins (products gross margin down 200 bps sequentially).</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Regulatory & Legal Developments",
+     "text": "<cite index=\"28-3\">After the Supreme Court declined Apple's request to pause the lower court contempt order, pressure intensified on Apple's App Store policies while developers, investors, and regulators monitored the dispute closely.</cite> <cite index=\"44-15\">Apple filed suit against OpenAI earlier this month, accusing the company of systematically stealing its trade secrets to fuel its own hardware ambitions.</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Analyst Sentiment & Market Outlook",
+     "text": "<cite index=\"38-1\">According to 28 analysts, Apple (AAPL) has a Buy consensus rating as of Jul 13, 2026.</cite> <cite index=\"44-1\">On July 13, Citi analyst Asiya Merchant raised her price target on the stock to $365 from $315, maintaining a buy rating and telling clients the company still has roughly 16% more upside from here.</cite>",
+     "confidence": "High"
+    },
+    {
+     "category": "Market Share & Competitive Gains",
+     "text": "<cite index=\"44-24\">Apple is expected to reach a record smartphone market share of around 25% this year, up about two percentage points from where it was.</cite> <cite index=\"44-21,44-22\">The smartphone and PC markets are in rough shape, likely down a mid- to high-teens percent in 2026. Apple is gaining ground anyway.</cite>",
+     "confidence": "High"
+    }
+   ],
+   "error": null
+  },
+  {
+   "source_name": "Google Trends",
+   "findings": [
+    {
+     "category": "Overall Search Interest Trend",
+     "text": "Apple Inc. search interest is in a sustained decline phase. The recent 4-week average (60.0) is 21% below the 90-day average (76.2), indicating a downward trajectory rather than cyclical fluctuation. Weekly data shows consistent interest in the 55\u201362 range with no recovery momentum.",
+     "confidence": "High"
+    },
+    {
+     "category": "Peak Interest Event",
+     "text": "A peak interest score of 100 occurred earlier in the 90-day window but is not visible in the provided 12-week weekly breakdown, suggesting the spike occurred 5\u201312 weeks ago. Without timestamp, the cause cannot be definitively attributed, but typical triggers would be product announcements, earnings, or major news events.",
+     "confidence": "Medium"
+    },
+    {
+     "category": "Related Query Composition & Consumer Focus",
+     "text": "Top related queries are dominated by Apple's services and wearables ecosystem (Apple Watch at 100, Apple TV at 52, Apple Music at 37), not core iPhone/Mac hardware. This suggests consumer search interest is shifting toward peripheral products and services rather than flagship devices, potentially indicating mature hardware market saturation or reduced hardware launch anticipation.",
+     "confidence": "High"
+    },
+    {
+     "category": "Data Quality Issue in Rising Queries",
+     "text": "Rising queries include non-Apple brand terms ('Busch apple', 'Busch light apple') with extremely high relative values (950\u20132150), indicating these are likely false positives from keyword matching or unrelated search volume spikes. The 'apple watch series 11' query (value: 400) is the only legitimate Apple product signal in the rising list, suggesting weak organic product interest growth.",
+     "confidence": "High"
+    },
+    {
+     "category": "Divergence from Investment Narrative",
+     "text": "Declining overall search interest combined with lack of strong hardware product signals (iPhone, iPad, Mac absent from top queries) suggests consumer search engagement is weakening despite any positive investment thesis. The shift toward services/wearables queries may reflect mature product cycles, but the overall downtrend indicates reduced consumer mindshare compared to the 90-day baseline.",
+     "confidence": "Medium"
+    }
+   ],
+   "error": null
+  }
+ ],
+ "synthesis": {
+  "company_name": "Apple Inc.",
+  "ticker": "AAPL",
+  "executive_summary": "Apple delivered a strong Q2 2026 with $111.2B in revenue (+17% YoY) and 49.3% gross margins, driven by iPhone and Services momentum, but the company faces a convergence of structural risks: tariff and supply chain uncertainty, escalating regulatory pressure on App Store economics, a memory chip shortage forcing price increases, and a landmark CEO transition to John Ternus effective September 1, 2026. R&D spending surged 34% YoY, signaling aggressive AI investment, while the new Siri unveiled at WWDC 2026 represents Apple's most direct competitive response to ChatGPT and Claude. Despite analyst consensus remaining bullish (Buy, $365 price target from Citi), declining Google Trends search interest and a sharp stock selloff on MacBook/iPad price hike news suggest consumer sentiment is more fragile than the financial headlines imply. The combination of leadership change, AI execution risk, and regulatory overhang makes the next 12 months a pivotal inflection period for Apple's competitive positioning.",
+  "key_takeaways": [
+   "Monitor the Ternus CEO transition closely: leadership changes at Apple are rare and high-stakes; his stated priority of re-centering design could signal a strategic reorientation, but execution risk during a simultaneous AI pivot and regulatory battle is elevated \u2014 investors should watch for any organizational disruption or product delay signals in Q3 2026.",
+   "App Store regulatory risk is not priced in as a binary event: the EU \u20ac500M fine, a potential second investigation carrying up to 10% of global net sales, and the U.S. Epic link-out order collectively threaten the highest-margin revenue stream (Services at 76.7% gross margin) \u2014 operators and investors should model a range of App Store revenue haircut scenarios.",
+   "The memory chip shortage and resulting price increases are a near-term margin and demand risk: news sources confirm products gross margin fell 200 bps sequentially and the stock erased year-to-date gains on the pricing announcement \u2014 watch sequential product margin trajectory in Q3 2026 as a leading indicator of whether Apple can pass costs through or absorbs them.",
+   "AI execution is the defining strategic bet: R&D up 34% YoY and the new Siri with ChatGPT/Claude-comparable capabilities signal Apple is spending aggressively to close the AI gap \u2014 the September iOS launch will be the first real market test of whether Apple Intelligence drives upgrade cycles or disappoints, making WWDC-to-launch developer and consumer feedback critical to monitor.",
+   "Tariff exposure remains a material wildcard: despite a February 2026 Supreme Court ruling striking down certain tariffs, the SEC filing explicitly states the ultimate impact is uncertain and Section 232 semiconductor tariffs could still be imposed \u2014 any new trade policy announcements affecting China, India, or Taiwan supply chains should be treated as high-priority signals."
+  ],
+  "reinforcing_signals": [
+   "Strong Q2 2026 financial performance is confirmed by both the SEC Filing (total net sales $111.2B, gross margin 49.3%, EPS $2.01) and Recent News (revenue up 17% YoY, EPS up 22% YoY, both beating Wall Street estimates), with no material discrepancy between the two sources.",
+   "Services as a high-margin strategic priority is reinforced by both the SEC Filing (Services gross margin 76.7% vs. Products 38.7%, 16% YoY growth) and Recent News (analyst bullishness partly premised on Services mix shift), converging on the view that Services is the core long-term margin driver.",
+   "App Store regulatory pressure is confirmed by both the SEC Filing (\u20ac500M EU fine, Epic Games Ninth Circuit order, ongoing investigations) and Recent News (Supreme Court declining to pause the contempt order, developer and investor scrutiny intensifying), making this a high-confidence risk signal.",
+   "Capital return commitment is confirmed by both the SEC Filing ($100B new buyback authorization, dividend raised to $0.27) and Recent News (board authorized $100B repurchase, 4% dividend increase), signaling management confidence in cash generation despite stated macro uncertainty.",
+   "Memory/component supply constraints as a margin headwind are confirmed by both the SEC Filing (explicit disclosure of supply constraints for NAND and DRAM, warning of intensifying trends) and Recent News (memory chip shortage forcing MacBook/iPad price increases, products gross margin down 200 bps sequentially).",
+   "AI investment as a strategic priority is reinforced by both the SEC Filing (R&D up 34% YoY, AI risk disclosures, infrastructure cost surge) and Recent News (new Siri with ChatGPT/Claude-comparable capabilities unveiled at WWDC 2026), confirming this is a top management priority with real capital allocation behind it."
+  ],
+  "contradictions": [
+   {
+    "claim": "Consumer demand and market engagement strength",
+    "source_a": "Recent News: Apple is gaining smartphone market share (expected to reach ~25%, up ~2pp YoY), iPhone 17 described by Cook as 'most popular lineup in our history,' and analyst consensus is Buy with a $365 price target implying ~16% upside.",
+    "source_b": "Google Trends: Overall Apple search interest is in sustained decline, with the 4-week average (60.0) running 21% below the 90-day average (76.2). Top queries are dominated by peripheral products (Apple Watch, Apple TV, Apple Music) with iPhone, iPad, and Mac absent \u2014 suggesting weakening consumer mindshare for core hardware.",
+    "significance": "This is a material contradiction for competitive intelligence. If Apple is genuinely gaining market share while search interest declines, it may indicate share gains are coming from a shrinking but loyal base rather than expanding consumer engagement \u2014 a structurally weaker position than headline share figures suggest. Alternatively, declining search interest could be a leading indicator of softening demand that has not yet appeared in shipment data. Investors relying solely on market share metrics may be missing an early warning signal."
+   },
+   {
+    "claim": "Gross margin trajectory and outlook",
+    "source_a": "SEC Filing: Total gross margin expanded 220 basis points YoY to 49.3% in Q2 2026, with management attributing gains to favorable product mix and foreign currency tailwinds. The filing frames this as a positive trajectory.",
+    "source_b": "Recent News: Products gross margin fell 200 bps sequentially (not YoY) due to rising memory costs, and Apple announced price increases on MacBooks and iPads to offset the shortage \u2014 a move that caused a sharp stock selloff wiping out year-to-date gains.",
+    "significance": "The YoY expansion cited in the SEC Filing and the sequential compression reported in news are not technically contradictory (different time periods), but the juxtaposition is strategically important: the YoY comparison flatters the picture while the sequential trend reveals a deteriorating near-term margin environment. Analysts and investors must distinguish between these timeframes to avoid being misled by the headline gross margin figure."
+   },
+   {
+    "claim": "Apple's litigation posture toward AI competitors",
+    "source_a": "Recent News: Apple filed suit against OpenAI accusing the company of systematically stealing trade secrets to fuel its own hardware ambitions \u2014 a combative, adversarial stance toward a key AI partner.",
+    "source_b": "Recent News (same source, different item) and SEC Filing: Apple's new Siri is described as having 'chatbot capabilities similar to ChatGPT or Claude,' implying ongoing integration or at minimum close competitive benchmarking against OpenAI's products. The SEC Filing's AI risk disclosures do not mention OpenAI litigation.",
+    "significance": "Apple simultaneously appears to be benchmarking its AI products against OpenAI while suing the company \u2014 a tension that could complicate Apple's AI partnership strategy, developer ecosystem relationships, and the credibility of its AI product roadmap. If the litigation escalates, it could disrupt any existing or planned integrations and create reputational risk in the AI developer community at a critical moment for Apple Intelligence adoption."
+   }
+  ],
+  "notable_absences": [
+   "No discussion of Apple's Vision Pro / spatial computing strategy across any source: given the product launched in early 2024 and represents Apple's most significant new platform bet in years, the complete absence of Vision Pro from SEC Filing risk factors, news coverage, and Google Trends rising queries is striking \u2014 it may indicate the product has been quietly deprioritized or is performing below expectations.",
+   "No competitive benchmarking against Samsung, Google Pixel, or Android ecosystem in any source: for a company facing a pivotal AI product cycle and claiming record smartphone market share, the absence of any direct competitive comparison to Android OEMs is a gap \u2014 particularly relevant given Google's Gemini integration into Pixel and Samsung's Galaxy AI push.",
+   "No discussion of Apple's India manufacturing ramp as a tariff mitigation strategy: given the SEC Filing's extensive tariff risk disclosure and Apple's well-documented efforts to shift production to India, the absence of any update on India manufacturing capacity or timeline across all three sources is a notable gap for supply chain risk assessment.",
+   "No mention of Apple's autonomous vehicle or robotics initiatives: given the scale of R&D spending ($11.4B in a single quarter, up 34% YoY) and the cancellation of the Apple Car project in early 2024, there is no disclosure or news coverage of where that redirected R&D investment is flowing beyond AI \u2014 a strategically important unknown.",
+   "No forward revenue or margin guidance from management: the SEC Filing explicitly notes Apple provided no specific forward guidance, and Recent News does not report any guidance from the earnings call. For a company of Apple's scale facing this many concurrent uncertainties (CEO transition, tariffs, memory shortage, regulatory actions), the absence of quantitative guidance significantly limits investors' ability to model near-term outcomes."
+  ],
+  "watch_signals": [
+   "John Ternus's first major public decisions as CEO (effective September 1, 2026): his stated intent to re-establish design as Apple's central priority could signal product portfolio changes, organizational restructuring, or shifts in hardware investment \u2014 any early personnel moves or product strategy signals before or immediately after the transition date should be treated as high-priority indicators.",
+   "iOS 26 / Apple Intelligence September launch reception: the new Siri and AI features previewed at WWDC 2026 will ship in September \u2014 developer adoption rates, App Store AI integration velocity, and early consumer upgrade cycle data will be the first real market test of whether Apple's AI investment translates to competitive differentiation or is perceived as catching up rather than leading.",
+   "Sequential product gross margin in Q3 2026: with memory costs rising and price increases already announced, the Q3 earnings report will reveal whether Apple successfully passed costs to consumers or absorbed margin compression \u2014 a second sequential decline would confirm a structural headwind rather than a one-quarter anomaly.",
+   "EU second DMA investigation outcome: the SEC Filing discloses preliminary findings in a second EU investigation that could impose fines up to 10% of annual worldwide net sales (approximately $4B+ based on current revenue run rate) \u2014 any formal charges or settlement negotiations would be a material catalyst for Services revenue modeling.",
+   "Google Trends recovery or continued decline into iPhone 17 launch season: historically, Apple search interest spikes sharply in August-September ahead of iPhone launches \u2014 if the current downtrend does not reverse as the September launch approaches, it would be an early warning signal of reduced consumer anticipation and potential softer-than-expected upgrade demand.",
+   "Apple vs. OpenAI litigation developments: the trade secret lawsuit is an early-stage signal that could escalate into a broader AI ecosystem conflict \u2014 watch for any injunctive relief filings, discovery disclosures, or settlement signals that could clarify the strategic intent and impact on Apple's AI partnership architecture."
+  ],
+  "error": null
+ },
+ "drift": {
+  "comparison_basis": "year-ago quarter",
+  "current_form": "10-Q",
+  "current_report_date": "2026-03-28",
+  "prior_form": "10-Q",
+  "prior_report_date": "2025-03-29",
+  "headline": "Apple's current filing adds new component supply-constraint warnings and a major AI-risk factor, discloses a court-ordered commission ban on App Store link-out purchases, and reports a sharp R&D spending surge, while tariff language evolves to reflect partial legal relief and new trade mechanisms.",
+  "items": [
+   {
+    "kind": "added",
+    "label": "Component supply constraints & cost escalation",
+    "summary": "The current filing introduces an entirely new disclosure that Apple is experiencing supply constraints and rising costs for advanced semiconductors, NAND and DRAM, and explicitly warns these trends are expected to intensify and materially adversely affect revenue, costs and gross margin. No such disclosure existed in the prior filing.",
+    "quote": "The Company is experiencing a period of supply constraints and increasing costs for components driven by factors such as industry supply-demand imbalances for components, including advanced semiconductors, storage (NAND) and memory (DRAM). The Company expects these trends to intensify, which, together with actions that may be taken by the Company in response to such trends, may materially adversely affect demand for the Company's products and negatively impact the Company's revenue, costs, gross margin, results of operations and financial condition.",
+    "section": "mda"
+   },
+   {
+    "kind": "added",
+    "label": "Standalone AI risk factor",
+    "summary": "The current filing adds a dedicated risk factor for artificial intelligence, listing a broad set of AI-specific risks including product liability, IP infringement, data privacy, cybersecurity, bias, harmful content, and online safety. This was absent as a standalone risk factor in the prior filing.",
+    "quote": "Issues related to artificial intelligence may result in reputational, competitive and financial harm to the Company, regulatory action, legal liability, and other material adverse effects to the Company's business, results of operations, financial condition and stock price. Artificial intelligence technologies are increasingly integrated into the Company's products and services and its business and operations. These technologies present emerging legal, regulatory, ethical and operational risks that could materially adversely affect the Company's business, results of operations and financial condition.",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "added",
+    "label": "App Store commission ban & Google search revenue risk",
+    "summary": "The current filing discloses that Apple is subject to a court order preventing it from imposing any commission or fee on certain link-out purchases, and separately warns that Google antitrust remedies ordered in September 2025 could prohibit Google from offering Apple commercial search distribution terms, materially threatening Apple's licensing revenue.",
+    "quote": "The Company is also currently subject to a court order in the U.S. preventing it from imposing any commission or fee on certain purchases that consumers make... A reversal of the order on appeal could result in imposition of certain remedies initially proposed by the DOJ, such as those prohibiting Google from offering the Company commercial terms for search distribution. If implemented, these remedies could materially adversely affect the Company's ability to earn revenue from such licensing arrangements.",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "intensified",
+    "label": "AI-driven cybersecurity risk",
+    "summary": "The current filing significantly expands the cybersecurity risk factor to include a detailed new section on how AI accelerates cyberattack sophistication\u2014covering AI-generated phishing, automated vulnerability exploitation, deepfakes bypassing authentication, and systemic risks from AI-enabled attacks\u2014language absent from the prior filing.",
+    "quote": "The rapid advancement and widespread dissemination of artificial intelligence technologies significantly increases the risks associated with cyberattacks. For example, artificial intelligence technologies are being used to produce highly targeted phishing campaigns, automate the discovery or exploitation of vulnerabilities, generate deepfake content designed to bypass authentication protocols, and identify and exploit vulnerabilities at a highly accelerated pace. As increasingly sophisticated and capable artificial intelligence models continue to become available, these risks are intensifying.",
+    "section": "risk_factors"
+   },
+   {
+    "kind": "intensified",
+    "label": "R&D expense surge",
+    "summary": "R&D expense jumped 34% year-over-year in Q2 2026 ($11.4B vs. $8.6B) and 33% for the first half, a materially faster rate of increase than the ~8% growth reported in the prior filing, driven by higher infrastructure and headcount costs likely tied to AI investment.",
+    "quote": "Research and development $ 11,419 $ 8,550 34 % $ 22,306 $ 16,818 33 %",
+    "section": "mda"
+   },
+   {
+    "kind": "intensified",
+    "label": "Tariff landscape update with new legal and regulatory developments",
+    "summary": "The current filing updates the tariff section to reflect the Section 232 semiconductor investigation results (no new tariffs on Apple products), a U.S. Supreme Court ruling striking down certain IEEPA tariffs (with Apple applying for refunds), and new tariff mechanisms under Section 122 and Section 301\u2014adding specificity and complexity absent from the prior filing.",
+    "quote": "On February 20, 2026, the U.S. Supreme Court issued a ruling striking down certain tariffs previously imposed under the International Emergency Economic Powers Act of 1977. The Company is applying for a refund of tariffs paid, following the processes established by U.S. Customs and Border Protection. Various modifications to U.S. tariffs have been announced, including the imposition of tariffs under Section 122 of the Trade Act of 1974, and further changes could be made in the future, which may include additional measures under the Section 232 semiconductor sector investigation, additional sector-based tariffs, actions under Section 301 of the Trade Act of 1974, or other measures.",
+    "section": "mda"
+   },
+   {
+    "kind": "dropped",
+    "label": "Share repurchase pace \u2014 $25B in single quarter",
+    "summary": "The prior filing disclosed $25.0 billion of share repurchases in Q2 2025; the current filing reports only $11.0 billion in Q2 2026, a 56% reduction, and this dramatic slowdown is not explained in the narrative, which is a material signal about capital allocation priorities.",
+    "quote": "During the second quarter of 2025, the Company repurchased $25.0 billion of its common stock and paid dividends and dividend equivalents of $3.8 billion.",
+    "section": "mda"
+   },
+   {
+    "kind": "tone",
+    "label": "Macroeconomic conditions framing \u2014 from neutral to explicitly cautionary",
+    "summary": "The prior filing described macroeconomic conditions in general terms (inflation, interest rates, currency fluctuations); the current filing adds 'component pricing' to that list and immediately follows with a forward-looking warning that supply constraints 'are expected to intensify,' replacing the prior neutral framing with an explicitly negative forward outlook.",
+    "quote": "Macroeconomic conditions, including inflation, interest rates, component pricing and currency fluctuations, have directly and indirectly impacted, and could in the future materially impact, the Company's results of operations and financial condition. The Company is experiencing a period of supply constraints and increasing costs for components... The Company expects these trends to intensify.",
+    "section": "mda"
+   }
+  ],
+  "error": null,
+  "available": true
+ },
+ "news_drift": {
+  "prior_period": "Mar 2025",
+  "headline": "Apple shifted from a narrative of AI stumbles and missed promises in March 2025 to a story of vindication and hardware-focused dominance by mid-2026, with investor attention pivoting from AI capabilities to cash generation and supply-chain strength.",
+  "items": [
+   {
+    "kind": "sentiment",
+    "label": "AI narrative reversal",
+    "summary": "Apple's shares initially slumped in the wake of a disappointing presentation of upcoming AI features, but by July 2026, investors changed their focus from worrying about AI to paying attention to Apple's strong cash flow and ability to grow over the long term. The early 2025 narrative of AI failure gave way to a more positive frame around device-based AI and pragmatism."
+   },
+   {
+    "kind": "emerged",
+    "label": "Supply-chain durability and custom silicon deals",
+    "summary": "Apple announced a new multiyear commitment with Broadcom to design and produce custom silicon components, with the agreement expected to exceed $30B. This emerged as a headline catalyst in recent coverage, signaling Apple's strategic strength in controlling its own silicon fate\u2014a theme absent from March 2025 discussion."
+   },
+   {
+    "kind": "emerged",
+    "label": "Leadership succession and hardware-focused CEO transition",
+    "summary": "Apple announced Tim Cook would become executive chairman and John Ternus would become CEO effective September 1, 2026. Ternus's ascension confirms Apple's bet that the AI era will be won on devices, not in the cloud. This hardware-centric narrative shift was not a focus in March 2025."
+   },
+   {
+    "kind": "faded",
+    "label": "Siri delay and AI execution concerns",
+    "summary": "In March 2025, Apple delayed \"More personal Siri\" and pulled advertisements after it had advertised the feature as a key reason to buy an iPhone 16. By mid-2026, this narrative of broken AI promises largely receded from headlines, replaced by focus on strong iPhone sales and supply-chain wins."
+   }
+  ],
+  "error": null,
+  "available": true
+ }
+}
