@@ -18,6 +18,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from config import CLAUDE_MODEL_FAST, CLAUDE_MAX_TOKENS_PER_SOURCE
+from src import spend
 from src.analysis.prompts import NEWS_DRIFT_SYSTEM_PROMPT, NEWS_DRIFT_USER_PROMPT
 
 load_dotenv()
@@ -96,6 +97,7 @@ def detect_news_drift(company_name: str, ticker: str, prior_period: str) -> News
             system=NEWS_DRIFT_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}],
         )
+        spend.record_usage(CLAUDE_MODEL_FAST, response.usage)
         raw_text = next(
             (b.text for b in reversed(response.content) if b.type == "text"),
             "",

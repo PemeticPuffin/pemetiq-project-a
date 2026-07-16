@@ -11,6 +11,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from config import CLAUDE_MODEL_FAST, CLAUDE_MAX_TOKENS_PER_SOURCE, CLAUDE_TEMPERATURE
+from src import spend
 from src.analysis.confidence import normalize_confidence
 from src.analysis.prompts import (
     NEWS_SYSTEM_PROMPT,
@@ -150,6 +151,7 @@ async def _analyze_news_web(
             system=NEWS_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}],
         )
+        spend.record_usage(CLAUDE_MODEL_FAST, response.usage)
         # Web search responses have multiple content blocks; take the last text block
         raw_text = next(
             (b.text for b in reversed(response.content) if b.type == "text"),
@@ -209,6 +211,7 @@ async def _call_claude(
             system=system_prompt,
             messages=[{"role": "user", "content": user_prompt}],
         )
+        spend.record_usage(CLAUDE_MODEL_FAST, response.usage)
         raw_text = response.content[0].text
         findings = _parse_findings(raw_text, source_name)
         return SourceAnalysis(

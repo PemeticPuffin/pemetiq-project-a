@@ -46,6 +46,7 @@ from src.ui.components import (
     render_takeaways_anchor,
     render_takeaways_section,
 )
+from src import spend
 from src.ui.samples import list_samples, load_sample
 from src.ui.styling import CUSTOM_CSS
 
@@ -229,7 +230,27 @@ def _run_pipeline(entity: ResolvedEntity, drift_mode: str = "yoy") -> dict:
     return {"entity": entity, "analyses": analyses, "drift": drift}
 
 
+def _render_gate_notice(message: str) -> None:
+    """Explain why a live run was refused and point at the cached samples."""
+    st.markdown(
+        f'<div style="background:#FFF6F2;border:1px solid rgba(232,100,59,0.35);'
+        f'border-left:3px solid #E8643B;border-radius:8px;padding:0.9rem 1.1rem;'
+        f'margin-bottom:1rem;font-size:0.88rem;line-height:1.6;color:#39485A;">'
+        f'{message}</div>',
+        unsafe_allow_html=True,
+    )
+
+
 # ── Pipeline ───────────────────────────────────────────────────────────────
+# Public + unauthenticated + real cost per run: check the spend and per-visitor
+# guards before any live run. A refusal degrades to the cached samples rather
+# than taking the tool offline.
+if run_clicked:
+    _allowed, _gate_msg = spend.gate()
+    if not _allowed:
+        _render_gate_notice(_gate_msg)
+        run_clicked = False
+
 if run_clicked:
     if mode == "Single company":
         if not query.strip():

@@ -16,6 +16,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from config import CLAUDE_MODEL, CLAUDE_MAX_TOKENS_SYNTHESIS, CLAUDE_TEMPERATURE
+from src import spend
 from src.analysis.prompts import DRIFT_SYSTEM_PROMPT, DRIFT_USER_PROMPT
 from src.data.sec_edgar import SECFiling, format_sections_for_prompt
 
@@ -107,6 +108,7 @@ def detect_drift(
             system=DRIFT_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}],
         )
+        spend.record_usage(CLAUDE_MODEL, response.usage)
         raw_text = response.content[0].text
         return _parse_drift(raw_text, result)
     except Exception as exc:

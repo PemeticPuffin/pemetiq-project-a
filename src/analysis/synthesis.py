@@ -10,6 +10,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from config import CLAUDE_MODEL, CLAUDE_MAX_TOKENS_SYNTHESIS, CLAUDE_TEMPERATURE
+from src import spend
 from src.analysis.per_source import SourceAnalysis
 from src.analysis.prompts import (
     COMPARISON_SYSTEM_PROMPT,
@@ -136,6 +137,7 @@ def compare_synthesize(
             system=COMPARISON_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}],
         )
+        spend.record_usage(CLAUDE_MODEL, response.usage)
         raw_text = response.content[0].text
         return _parse_comparison(raw_text, name_a, ticker_a, name_b, ticker_b)
     except Exception as exc:
@@ -226,6 +228,7 @@ def synthesize(
             system=SYNTHESIS_SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}],
         )
+        spend.record_usage(CLAUDE_MODEL, response.usage)
         raw_text = response.content[0].text
         return _parse_synthesis(raw_text, company_name, ticker)
     except Exception as exc:

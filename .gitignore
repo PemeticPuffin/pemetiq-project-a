@@ -7,3 +7,4 @@ venv/
 *.egg-info/
 .DS_Store
 curation_summary.md
+data/spend_ledger.json
