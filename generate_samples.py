@@ -26,7 +26,7 @@ from src.entity_resolver import resolve_company
 from src.ui.samples import list_samples, save_sample
 
 
-def generate(slug: str, query: str) -> None:
+def generate(slug: str, query: str) -> dict:
     print(f"── {slug}: resolving {query!r}…")
     entity = resolve_company(query)
 
@@ -69,18 +69,20 @@ def generate(slug: str, query: str) -> None:
         source_analyses=analyses,
     )
 
-    path = save_sample(slug, {
+    result = {
         "entity": entity,
         "analyses": analyses,
         "synthesis": synthesis,
         "drift": drift,
         "news_drift": news_drift,
-    })
+    }
+    path = save_sample(slug, result)
     n_findings = sum(len(a.findings) for a in analyses)
     print(f"   saved {path.name}: {n_findings} findings, "
           f"{len(synthesis.contradictions)} contradictions, "
           f"drift={'yes' if drift and drift.available else 'no'}, "
           f"news_drift={'yes' if news_drift and news_drift.available else 'no'}")
+    return result
 
 
 if __name__ == "__main__":
