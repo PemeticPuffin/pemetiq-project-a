@@ -46,7 +46,7 @@ from src.ui.components import (
     render_takeaways_anchor,
     render_takeaways_section,
 )
-from src.ui.samples import SAMPLES, load_sample, sample_available
+from src.ui.samples import list_samples, load_sample
 from src.ui.styling import CUSTOM_CSS
 
 # ── Inject brand CSS ───────────────────────────────────────────────────────
@@ -124,19 +124,19 @@ else:
         run_clicked = st.button("Compare", type="primary", use_container_width=True)
 
 # ── Sample brief chips ─────────────────────────────────────────────────────
-_available_samples = [s for s in SAMPLES if sample_available(s)]
-if mode == "Single company" and _available_samples:
-    cols = st.columns([2.2] + [1] * len(_available_samples) + [3], gap="small")
+_samples = list_samples()
+if mode == "Single company" and _samples:
+    cols = st.columns([2.2] + [1] * len(_samples) + [3], gap="small")
     with cols[0]:
         st.markdown(
             '<div style="font-size:0.8rem;color:#6B7580;padding-top:0.45rem;'
             'text-align:right;">Or see an instant sample brief:</div>',
             unsafe_allow_html=True,
         )
-    for i, slug in enumerate(_available_samples):
+    for i, s in enumerate(_samples):
         with cols[i + 1]:
-            if st.button(SAMPLES[slug], key=f"sample_{slug}", use_container_width=True):
-                st.session_state.result = load_sample(slug)
+            if st.button(s["label"], key=f"sample_{s['slug']}", use_container_width=True):
+                st.session_state.result = load_sample(s["slug"])
                 st.session_state.mode = "single"
                 st.rerun()
 

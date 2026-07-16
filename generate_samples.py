@@ -23,7 +23,7 @@ from src.analysis.synthesis import synthesize
 from src.data.sec_edgar import fetch_comparison_filings
 from src.data.trends import fetch_trends
 from src.entity_resolver import resolve_company
-from src.ui.samples import SAMPLES, save_sample
+from src.ui.samples import list_samples, save_sample
 
 
 def generate(slug: str, query: str) -> None:
@@ -84,6 +84,7 @@ def generate(slug: str, query: str) -> None:
 
 
 if __name__ == "__main__":
-    slugs = sys.argv[1:] or list(SAMPLES)
+    lineup = {s["slug"]: (s.get("ticker") or s["label"]) for s in list_samples()}
+    slugs = sys.argv[1:] or list(lineup)
     for slug in slugs:
-        generate(slug, SAMPLES[slug])
+        generate(slug, lineup[slug])
