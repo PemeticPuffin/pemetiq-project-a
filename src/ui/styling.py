@@ -89,6 +89,32 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     background: #d4572f !important;
 }
 
+/* ── Sample brief chips ──────────────────────────────────────────── */
+[class*="st-key-sample_"] button {
+    height: 42px !important;
+    min-height: 42px !important;
+    border: 1px solid #D3DAE0 !important;
+    border-radius: 8px !important;
+    background: #FFFFFF !important;
+    color: #0E3B54 !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    padding: 0 0.85rem !important;
+    transition: border-color 0.15s ease, color 0.15s ease !important;
+}
+[class*="st-key-sample_"] button:hover {
+    border-color: #E8643B !important;
+    color: #E8643B !important;
+}
+/* keep labels on one line; truncate gracefully rather than wrap */
+[class*="st-key-sample_"] button p {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+}
+
 /* ── Section labels ──────────────────────────────────────────────── */
 .section-label {
     font-size: 0.7rem;

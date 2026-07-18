@@ -127,10 +127,10 @@ else:
 # ── Sample brief chips ─────────────────────────────────────────────────────
 _samples = list_samples()
 if mode == "Single company" and _samples:
-    cols = st.columns([2.2] + [1] * len(_samples) + [3], gap="small")
+    cols = st.columns([2.2] + [1.6] * len(_samples) + [2], gap="small")
     with cols[0]:
         st.markdown(
-            '<div style="font-size:0.8rem;color:#6B7580;padding-top:0.45rem;'
+            '<div style="font-size:0.8rem;color:#6B7580;padding-top:0.65rem;'
             'text-align:right;">Or see an instant sample brief:</div>',
             unsafe_allow_html=True,
         )
