@@ -209,7 +209,7 @@ def _render_contradictions(synthesis: SynthesisResult) -> None:
     if not contradictions:
         st.markdown(
             '<div class="contradictions-body">'
-            '<p style="color:#6B7580;font-size:0.9rem;margin:0;">No contradictions detected across sources.</p>'
+            '<p style="color:var(--muted);font-size:0.9rem;margin:0;">No contradictions detected across sources.</p>'
             "</div>",
             unsafe_allow_html=True,
         )
@@ -417,7 +417,7 @@ def render_takeaways_section(takeaways: list[str], compare: bool = False) -> Non
         f'<span style="font-size:0.75rem;font-weight:600;letter-spacing:0.08em;'
         f'text-transform:uppercase;color:var(--teal);">{label}</span>'
         f'</div>'
-        f'<div style="font-size:0.78rem;color:#6B7580;margin-bottom:0.75rem;">{subtitle}</div>'
+        f'<div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem;">{subtitle}</div>'
         f'<div style="border-top:1px solid rgba(14,59,84,0.1);">{items_html}</div>'
         f'</div>',
         unsafe_allow_html=True,
@@ -491,7 +491,7 @@ def render_comparison_view(
                 f'{company_label}'
                 f'<div class="signal-card-title" style="margin-top:0.3rem;">{edge.dimension}</div>'
                 f'<div class="signal-card-body">{edge.advantage}</div>'
-                f'<div style="font-size:0.75rem;color:#6B7580;margin-top:0.5rem;">{edge.evidence}</div>'
+                f'<div style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;">{edge.evidence}</div>'
                 f'</div>'
             )
         st.markdown(
@@ -696,7 +696,7 @@ def render_drift_section(drift, heading: str = "Narrative Drift") -> None:
     if not drift.items:
         st.markdown(
             header + headline
-            + '<div style="color:#6B7580;font-size:0.88rem;">'
+            + '<div style="color:var(--muted);font-size:0.88rem;">'
             f'No material narrative changes since the {esc(prior)} filing.</div>',
             unsafe_allow_html=True,
         )
