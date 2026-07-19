@@ -96,7 +96,7 @@ if mode == "Single company":
         run_clicked = st.button("Analyze", type="primary", use_container_width=True)
     query_b = ""
     st.markdown(
-        '<div style="font-size:0.8rem;color:#6B7580;margin:0.4rem 0 -0.4rem;">'
+        '<div style="font-size:0.8rem;color:var(--muted);margin:0.4rem 0 -0.4rem;">'
         'Narrative drift compares the latest filing against:</div>',
         unsafe_allow_html=True,
     )
@@ -130,7 +130,7 @@ if mode == "Single company" and _samples:
     cols = st.columns([2.2] + [1.6] * len(_samples) + [2], gap="small")
     with cols[0]:
         st.markdown(
-            '<div style="font-size:0.8rem;color:#6B7580;padding-top:0.65rem;'
+            '<div style="font-size:0.8rem;color:var(--muted);padding-top:0.65rem;'
             'text-align:right;">Or see an instant sample brief:</div>',
             unsafe_allow_html=True,
         )
@@ -177,9 +177,9 @@ def _render_sample_banner(generated_on: str) -> None:
     except ValueError:
         nice_date = generated_on
     st.markdown(
-        f'<div style="background:#F0F4F8;border:1px solid rgba(14,59,84,0.12);'
+        f'<div style="background:var(--wash);border:1px solid rgba(19,66,86,0.14);'
         f'border-radius:8px;padding:0.55rem 0.9rem;margin-bottom:1rem;'
-        f'font-size:0.82rem;color:#39485A;">'
+        f'font-size:0.82rem;color:var(--text-2);">'
         f'<strong>Cached sample</strong> · generated {nice_date} · '
         f'enter any public US company above for a fresh live brief.</div>',
         unsafe_allow_html=True,
@@ -233,9 +233,9 @@ def _run_pipeline(entity: ResolvedEntity, drift_mode: str = "yoy") -> dict:
 def _render_gate_notice(message: str) -> None:
     """Explain why a live run was refused and point at the cached samples."""
     st.markdown(
-        f'<div style="background:#FFF6F2;border:1px solid rgba(232,100,59,0.35);'
-        f'border-left:3px solid #E8643B;border-radius:8px;padding:0.9rem 1.1rem;'
-        f'margin-bottom:1rem;font-size:0.88rem;line-height:1.6;color:#39485A;">'
+        f'<div style="background:#FBF0EA;border:1px solid rgba(207,94,64,0.35);'
+        f'border-left:3px solid var(--coral);border-radius:8px;padding:0.9rem 1.1rem;'
+        f'margin-bottom:1rem;font-size:0.88rem;line-height:1.6;color:var(--text-2);">'
         f'{message}</div>',
         unsafe_allow_html=True,
     )
@@ -419,11 +419,11 @@ if st.session_state.result:
 else:
     st.markdown(
         """
-        <div style="text-align:center; padding: 4rem 0; color: #6B7580;">
-            <div style="font-size: 0.95rem; font-weight: 500; color: #6B7580;">
+        <div style="text-align:center; padding: 4rem 0; color: var(--muted);">
+            <div style="font-size: 0.95rem; font-weight: 500; color: var(--muted);">
                 Enter a company name or ticker above to generate your brief.
             </div>
-            <div style="font-size: 0.82rem; margin-top: 0.5rem; color: #9EA6B0;">
+            <div style="font-size: 0.82rem; margin-top: 0.5rem; color: var(--muted);">
                 Works with any public US company — try AAPL, Palantir, or Nvidia.
             </div>
         </div>

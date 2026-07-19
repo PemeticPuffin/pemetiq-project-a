@@ -1,26 +1,71 @@
-"""CSS and brand styling for the Cadillaq Streamlit app."""
+"""CSS and brand styling for the Cadillaq Streamlit app.
 
-# Pemetiq brand colors
-PRIMARY = "#001731"
+Colors come from the Pemetiq token set, canonically defined in
+PemeticPuffin/pemetiq-ops -> design/PEMETIQ_TOKENS.md. The CSS below declares
+them once as custom properties on :root and references them everywhere else,
+so a palette change is a one-place edit.
+"""
+
+# Pemetiq brand colors — anchored on the wordmark SVG.
+PRIMARY = "#134256"
 SECONDARY = "#1A5C6A"
-ACCENT = "#E8643B"
-BACKGROUND = "#FAFBFC"
-TEXT = "#333333"
-MUTED = "#6B7580"
+ACCENT = "#cf5e40"
+ACCENT_DARK = "#ae3f1b"
+ACCENT_LIGHT = "#f2a892"
+BACKGROUND = "#F0EDE8"
+TEXT = "#2E2A26"
+MUTED = "#6E675E"
 
 CUSTOM_CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
+/* ── Pemetiq design tokens ───────────────────────────────────────── */
+:root {
+    --navy: #134256;
+    --navy-lift: #17506a;      /* gradient partner for navy grounds */
+    --coral: #cf5e40;          /* fills only — 3.38:1, not for small text */
+    --coral-dark: #ae3f1b;     /* ANY coral touching text — fills behind white,
+                                  or coral used as text. Covers all three grounds. */
+    --coral-light: #f2a892;    /* eyebrow labels on navy grounds */
+    --teal: #1A5C6A;
+
+    --cream: #F0EDE8;
+    --surface: #FFFFFF;
+    --text: #2E2A26;
+    --text-2: #4A443C;
+    --muted: #6E675E;
+    --border: #DDD8D0;
+    --border-strong: #C9C2B8;
+    --wash: #EDE9E2;           /* subtle warm fill for tiles/pills */
+    --wash-2: #F5F2ED;
+}
+
 html, body, [class*="css"] {
     font-family: 'DM Sans', sans-serif;
-    color: #333333;
-    background: #FAFBFC;
+    color: var(--text);
+    background: var(--cream);
 }
 
 .block-container {
     padding-top: 1.5rem !important;
     max-width: 1100px !important;
+}
+
+/* ── Multiselect filter chips ────────────────────────────────────
+   Streamlit's baseweb tags fill with primaryColor and set white text: white on
+   coral is 3.94:1, short of AA at 12px. Deepen the fill to coral-dark (5.95:1). */
+span[data-baseweb="tag"] {
+    background-color: var(--coral-dark) !important;
+}
+
+/* ── Selected segmented-control label ────────────────────────────
+   Streamlit tints the selected segment with primaryColor at 10% alpha, so coral
+   text lands on a coral wash at only 3.03:1. Deepen the label so the state still
+   reads as coral but clears AA at 14px. */
+button[aria-checked="true"],
+button[aria-checked="true"] * {
+    color: var(--coral-dark) !important;
 }
 
 /* ── Hide Streamlit chrome ──────────────────────────────────────── */
@@ -29,7 +74,7 @@ header[data-testid="stHeader"], #MainMenu, footer,
 
 /* ── Header ──────────────────────────────────────────────────────── */
 .ci-header {
-    background: linear-gradient(135deg, #001731 0%, #0d2c4d 100%);
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-lift) 100%);
     padding: 2.5rem 3rem 2.2rem;
     border-radius: 14px;
     margin-bottom: 1.8rem;
@@ -40,7 +85,7 @@ header[data-testid="stHeader"], #MainMenu, footer,
     font-weight: 800;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #E8643B;
+    color: var(--coral-light);
     margin-bottom: 0.7rem;
 }
 .ci-header h1 {
@@ -61,22 +106,24 @@ header[data-testid="stHeader"], #MainMenu, footer,
 /* ── Search input ────────────────────────────────────────────────── */
 div[data-testid="stTextInput"] input {
     border-radius: 0.5rem !important;
-    border: 2px solid #e2e4e8 !important;
+    border: 2px solid var(--border) !important;
     padding: 0.7rem 1rem !important;
     font-size: 1rem !important;
     font-family: 'DM Sans', sans-serif !important;
-    background: white !important;
+    background: var(--surface) !important;
     transition: border-color 0.15s ease;
 }
 div[data-testid="stTextInput"] input:focus {
-    border-color: #001731 !important;
-    box-shadow: 0 0 0 2px rgba(0,23,49,0.08) !important;
+    border-color: var(--navy) !important;
+    box-shadow: 0 0 0 2px rgba(19,66,86,0.10) !important;
     outline: none !important;
 }
 
 /* ── Primary button ──────────────────────────────────────────────── */
+/* Fill is coral-dark, not coral: white on #cf5e40 is 3.94:1, short of AA at 14px.
+   White on coral-dark is 5.95:1. */
 div[data-testid="stButton"] button[kind="primary"] {
-    background: #E8643B !important;
+    background: var(--coral-dark) !important;
     border: none !important;
     border-radius: 8px !important;
     font-weight: 600 !important;
@@ -85,18 +132,20 @@ div[data-testid="stButton"] button[kind="primary"] {
     height: 44px !important;
     transition: background 0.15s ease !important;
 }
+/* Hover darkens the same token rather than introducing a fourth coral —
+   brightness() keeps the contrast gain monotonic, so hover can never fail. */
 div[data-testid="stButton"] button[kind="primary"]:hover {
-    background: #d4572f !important;
+    filter: brightness(0.88);
 }
 
 /* ── Sample brief chips ──────────────────────────────────────────── */
 [class*="st-key-sample_"] button {
     height: 42px !important;
     min-height: 42px !important;
-    border: 1px solid #D3DAE0 !important;
+    border: 1px solid var(--border-strong) !important;
     border-radius: 8px !important;
-    background: #FFFFFF !important;
-    color: #0E3B54 !important;
+    background: var(--surface) !important;
+    color: var(--navy) !important;
     font-family: 'DM Sans', sans-serif !important;
     font-size: 0.85rem !important;
     font-weight: 500 !important;
@@ -104,8 +153,8 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     transition: border-color 0.15s ease, color 0.15s ease !important;
 }
 [class*="st-key-sample_"] button:hover {
-    border-color: #E8643B !important;
-    color: #E8643B !important;
+    border-color: var(--coral) !important;
+    color: var(--coral-dark) !important;
 }
 /* keep labels on one line; truncate gracefully rather than wrap */
 [class*="st-key-sample_"] button p {
@@ -121,23 +170,23 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 0.25rem;
 }
 .section-subtitle {
     font-size: 0.84rem;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 1rem;
 }
 
 /* ── Company brief card ──────────────────────────────────────────── */
 .company-brief-card {
-    background: white;
-    border: 1px solid #E2E8F0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.5rem 1.8rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 1px 4px rgba(14, 59, 84, 0.05);
+    box-shadow: 0 1px 4px rgba(19, 66, 86, 0.05);
 }
 .company-brief-header {
     display: flex;
@@ -150,7 +199,7 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #001731;
+    background: var(--navy);
     color: white;
     display: inline-flex;
     align-items: center;
@@ -163,17 +212,17 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 .company-name {
     font-size: 1.22rem;
     font-weight: 700;
-    color: #001731;
+    color: var(--navy);
     margin: 0 0 0.2rem 0;
 }
 .company-meta {
     font-size: 0.79rem;
-    color: #6B7580;
+    color: var(--muted);
 }
 .exec-summary-p {
     font-size: 0.95rem;
     line-height: 1.72;
-    color: #333333;
+    color: var(--text);
     margin: 0 0 0.9rem 0;
 }
 .exec-summary-p.lead {
@@ -203,36 +252,36 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: #1A1A1A;
+    color: var(--text);
 }
 .signal-section-subtitle {
     font-size: 0.84rem;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 1.2rem;
     padding-left: 1.1rem;
 }
 
 /* ── Signal cards ────────────────────────────────────────────────── */
 .signal-card {
-    background: white;
-    border: 1px solid #E2E8F0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 1.2rem 1.4rem;
-    box-shadow: 0 1px 3px rgba(14, 59, 84, 0.04);
+    box-shadow: 0 1px 3px rgba(19, 66, 86, 0.04);
     display: flex;
     flex-direction: column;
 }
 .signal-card-title {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #001731;
+    color: var(--navy);
     margin-bottom: 0.45rem;
     line-height: 1.35;
 }
 .signal-card-body {
     font-size: 0.86rem;
     line-height: 1.6;
-    color: #444444;
+    color: var(--text-2);
     flex: 1;
     margin-bottom: 0.75rem;
 }
@@ -256,11 +305,11 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 .source-tag-sec    { background: #FDE8DF; color: #B8421F; }
 .source-tag-news   { background: #FDE8DF; color: #B8421F; }
 .source-tag-trends { background: #DFF0EC; color: #16534A; }
-.source-tag-default { background: #EEF0F3; color: #555555; }
+.source-tag-default { background: var(--wash); color: var(--text-2); }
 
 /* ── Contradictions banner ───────────────────────────────────────── */
 .contradictions-banner {
-    background: linear-gradient(135deg, #001731 0%, #0d2c4d 100%);
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-lift) 100%);
     border-radius: 12px 12px 0 0;
     padding: 1.5rem 1.8rem 1.4rem;
     margin-top: 1.8rem;
@@ -270,7 +319,7 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: #E8643B;
+    color: var(--coral-light);
     margin-bottom: 0.4rem;
 }
 .contradictions-banner .contrad-title {
@@ -284,8 +333,8 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     color: rgba(255,255,255,0.58);
 }
 .contradictions-body {
-    background: white;
-    border: 1px solid #E2E8F0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-top: none;
     border-radius: 0 0 12px 12px;
     padding: 1.5rem 1.8rem;
@@ -294,30 +343,30 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 
 /* ── Contradiction cards ─────────────────────────────────────────── */
 .contradiction-v2 {
-    border: 1px solid #E2E8F0;
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 1.2rem 1.4rem;
-    background: white;
+    background: var(--surface);
 }
 .contradiction-number {
     font-size: 0.67rem;
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: #E8643B;
+    color: var(--coral-dark);
     margin-bottom: 0.5rem;
 }
 .contradiction-title {
     font-size: 0.97rem;
     font-weight: 700;
-    color: #001731;
+    color: var(--navy);
     margin-bottom: 0.6rem;
     line-height: 1.35;
 }
 .contradiction-desc {
     font-size: 0.85rem;
     line-height: 1.6;
-    color: #444444;
+    color: var(--text-2);
     margin-bottom: 0.55rem;
 }
 .why-matters-label {
@@ -332,7 +381,7 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 .why-matters-text {
     font-size: 0.84rem;
     line-height: 1.55;
-    color: #555555;
+    color: var(--text-2);
     font-style: italic;
 }
 
@@ -342,12 +391,12 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: #1A1A1A;
+    color: var(--text);
     margin-bottom: 0.25rem;
 }
 .absence-section-subtitle {
     font-size: 0.84rem;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 1.1rem;
 }
 .absence-item {
@@ -356,11 +405,11 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     gap: 0.7rem;
     padding: 0.72rem 0;
     font-size: 0.87rem;
-    color: #333333;
+    color: var(--text);
     line-height: 1.45;
 }
 .absence-dash {
-    color: #CBD2D9;
+    color: var(--border-strong);
     font-size: 1rem;
     flex-shrink: 0;
     margin-top: 0.05rem;
@@ -372,33 +421,33 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: #1A1A1A;
+    color: var(--text);
     margin-bottom: 0.25rem;
 }
 .watch-section-subtitle {
     font-size: 0.84rem;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 1.1rem;
 }
 .watch-card {
-    background: white;
-    border: 1px solid #E2E8F0;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 1.1rem 1.3rem;
     margin-bottom: 0.85rem;
-    box-shadow: 0 1px 3px rgba(14, 59, 84, 0.04);
+    box-shadow: 0 1px 3px rgba(19, 66, 86, 0.04);
 }
 .watch-card-title {
     font-size: 0.92rem;
     font-weight: 600;
-    color: #001731;
+    color: var(--navy);
     margin-bottom: 0.4rem;
     line-height: 1.35;
 }
 .watch-card-body {
     font-size: 0.84rem;
     line-height: 1.55;
-    color: #555555;
+    color: var(--text-2);
 }
 
 /* ── Per-source findings ─────────────────────────────────────────── */
@@ -407,12 +456,12 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
     font-weight: 700;
     letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 0.25rem;
 }
 .findings-section-subtitle {
     font-size: 0.83rem;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 0.8rem;
 }
 .finding-card-v2 {
@@ -432,7 +481,7 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 .finding-category-v2 {
     font-size: 0.7rem;
     font-weight: 700;
-    color: #6B7580;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.3rem;
@@ -440,12 +489,12 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 .finding-text-v2 {
     font-size: 0.9rem;
     line-height: 1.58;
-    color: #333333;
+    color: var(--text);
     margin-bottom: 0.4rem;
 }
 .finding-source-link {
     font-size: 0.78rem;
-    color: #1A5C6A;
+    color: var(--teal);
     font-weight: 500;
 }
 
@@ -479,10 +528,10 @@ div[data-testid="stButton"] button[kind="primary"]:hover {
 .ci-footer {
     text-align: center;
     font-size: 0.78rem;
-    color: #9EA6B0;
+    color: var(--muted);
     margin-top: 3rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #E8EDF2;
+    border-top: 1px solid var(--border);
 }
 
 /* ── Tabs ────────────────────────────────────────────────────────── */
@@ -491,8 +540,13 @@ div[data-testid="stTabs"] button[data-testid="stTab"] {
     font-size: 0.88rem !important;
     font-weight: 500 !important;
 }
-div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
-    color: #001731 !important;
+/* Streamlit colours the selected tab with primaryColor; coral on cream is only
+   3.38:1. Deepen it — the selected state still reads coral but clears AA.
+   Selector is attribute-light because Streamlit's stTab testids shift between
+   releases; [aria-selected] is the stable hook. */
+[role="tab"][aria-selected="true"],
+[role="tab"][aria-selected="true"] * {
+    color: var(--coral-dark) !important;
     font-weight: 700 !important;
 }
 
@@ -508,14 +562,14 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
 .drift-title {
     font-size: 1.05rem;
     font-weight: 700;
-    color: #001731;
+    color: var(--navy);
     letter-spacing: -0.01em;
 }
 .drift-basis {
     font-size: 0.78rem;
     font-weight: 500;
-    color: #6B7580;
-    background: #F0F4F8;
+    color: var(--muted);
+    background: var(--wash);
     border-radius: 999px;
     padding: 0.28rem 0.75rem;
 }
@@ -523,7 +577,7 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
     font-size: 1.02rem;
     font-weight: 500;
     line-height: 1.55;
-    color: #1A2C3E;
+    color: var(--text);
     margin: 0.35rem 0 1.1rem;
 }
 .drift-tiles {
@@ -533,13 +587,13 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
     margin-bottom: 1.1rem;
 }
 .drift-tile {
-    background: #F6F8FA;
+    background: var(--wash-2);
     border-radius: 12px;
     padding: 0.7rem 0.85rem;
 }
 .drift-tile-label {
     font-size: 0.76rem;
-    color: #6B7580;
+    color: var(--muted);
     margin-bottom: 0.15rem;
 }
 .drift-tile-value {
@@ -549,11 +603,11 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
 }
 .drift-cards { display: flex; flex-direction: column; gap: 0.65rem; }
 .drift-card {
-    background: #FFFFFF;
-    border: 1px solid #E6EAEF;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 0.85rem 1rem;
-    box-shadow: 0 1px 3px rgba(14, 59, 84, 0.04);
+    box-shadow: 0 1px 3px rgba(19, 66, 86, 0.04);
 }
 .drift-card-head {
     display: flex;
@@ -572,34 +626,34 @@ div[data-testid="stTabs"] button[data-testid="stTab"][aria-selected="true"] {
 }
 .drift-badge-added       { background: #FCEBEA; color: #B3261E; }
 .drift-badge-intensified { background: #FDF0DD; color: #B4650A; }
-.drift-badge-dropped     { background: #EEF0F3; color: #55606B; }
+.drift-badge-dropped     { background: var(--wash); color: var(--text-2); }
 .drift-badge-tone        { background: #DFF0EC; color: #16534A; }
 .drift-badge-emerged     { background: #DFF0EC; color: #16534A; }
-.drift-badge-faded       { background: #EEF0F3; color: #55606B; }
+.drift-badge-faded       { background: var(--wash); color: var(--text-2); }
 .drift-badge-sentiment   { background: #E6F1FB; color: #1C5A86; }
 .drift-card-label {
     font-size: 0.92rem;
     font-weight: 600;
-    color: #001731;
+    color: var(--navy);
 }
 .drift-card-summary {
     font-size: 0.88rem;
     line-height: 1.55;
-    color: #46525E;
+    color: var(--text-2);
     margin: 0;
 }
 .drift-quote {
     font-size: 0.82rem;
     font-style: italic;
     line-height: 1.5;
-    color: #6B7580;
-    border-left: 2px solid #D5DCE3;
+    color: var(--muted);
+    border-left: 2px solid var(--border-strong);
     padding: 0.1rem 0 0.1rem 0.7rem;
     margin: 0.5rem 0 0;
 }
 .drift-value-added       { color: #B3261E; }
 .drift-value-intensified { color: #B4650A; }
-.drift-value-dropped     { color: #6B7580; }
+.drift-value-dropped     { color: var(--muted); }
 .drift-value-tone        { color: #16534A; }
 </style>
 """
@@ -636,6 +690,7 @@ def priority_badge_html(n: int) -> str:
     """
     return (
         f'<span style="display:inline-flex;align-items:center;justify-content:center;'
-        f'width:1.4rem;height:1.4rem;border-radius:50%;background:#F0F4F8;color:#001731;'
-        f'font-size:0.7rem;font-weight:700;margin-right:0.5rem;flex-shrink:0;">{n}</span>'
+        f'width:1.4rem;height:1.4rem;border-radius:50%;background:var(--wash);'
+        f'color:var(--navy);font-size:0.7rem;font-weight:700;margin-right:0.5rem;'
+        f'flex-shrink:0;">{n}</span>'
     )
