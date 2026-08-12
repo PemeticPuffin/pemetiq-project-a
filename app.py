@@ -47,6 +47,7 @@ from src.ui.components import (
     render_takeaways_section,
 )
 from src import spend
+import run_log
 from src.ui.samples import list_samples, load_sample
 from src.ui.styling import CUSTOM_CSS
 
@@ -252,6 +253,8 @@ if run_clicked:
         run_clicked = False
 
 if run_clicked:
+    # Baseline for per-run cost: spend recorded before this run started.
+    _cost_before = spend.daily_total()
     if mode == "Single company":
         if not query.strip():
             st.warning("Please enter a company name or ticker.")
@@ -351,6 +354,13 @@ if run_clicked:
                 "drift": drift,
                 "news_drift": news_drift,
             }
+            run_log.log_run(
+                app="cadillaq",
+                tool="single",
+                company=entity.legal_name,
+                cost_usd=spend.daily_total() - _cost_before,
+                meta={"ticker": entity.ticker, "sec_fallback": fallback},
+            )
             render_footer()
             st.stop()
 
@@ -396,6 +406,17 @@ if run_clicked:
                 "drift_a": r_a.get("drift"),
                 "drift_b": r_b.get("drift"),
             }
+            run_log.log_run(
+                app="cadillaq",
+                tool="compare",
+                company=entity_a.legal_name,
+                cost_usd=spend.daily_total() - _cost_before,
+                meta={
+                    "company_2": entity_b.legal_name,
+                    "ticker_a": entity_a.ticker,
+                    "ticker_b": entity_b.ticker,
+                },
+            )
 
 # ── Render stored result ───────────────────────────────────────────────────
 if st.session_state.result:
