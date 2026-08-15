@@ -377,7 +377,7 @@ def render_takeaways_anchor(takeaways: list[str], compare: bool = False) -> None
         f'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;">'
         f'<span style="font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;'
         f'color:var(--teal);">{label}</span>'
-        f'<a href="#takeaways" style="font-size:0.72rem;color:var(--teal);text-decoration:none;'
+        f'<a href="#takeaways" target="_self" style="font-size:0.72rem;color:var(--teal);text-decoration:none;'
         f'opacity:0.7;">full analysis ↓</a>'
         f'</div>'
         f'{items_html}'
@@ -800,8 +800,11 @@ def render_footer() -> None:
     logo_uri = _b64_img(_ASSETS / "primary-logo.png")
     st.markdown(
         f'<div class="ci-footer">'
-        f'<img src="{logo_uri}" style="height:28px;opacity:0.85;margin-bottom:0.5rem"><br>'
+        f'<img src="{logo_uri}" alt="Pemetiq" style="height:28px;opacity:0.85;margin-bottom:0.5rem"><br>'
         f'<span>© 2026 Pemetiq &nbsp;·&nbsp; All signals sourced from public data</span>'
+        f'<div style="margin-top:0.5rem;font-size:0.75rem;">'
+        f'<a href="https://manseil.pemetiq.com" target="_self" style="color:var(--teal);text-decoration:none;">Also from Pemetiq: Manseil — narrative stress test →</a>'
+        f'</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
